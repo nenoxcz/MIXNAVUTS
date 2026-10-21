@@ -84,6 +84,8 @@ data class RouteOption(
     val segments: List<Segment>,
     val maneuvers: List<Maneuver>,
     val curves: List<Curve> = emptyList(),
+    /** Cameras, traffic lights and speed bumps along the route, in driving order. */
+    val alerts: List<RouteAlert> = emptyList(),
 ) {
     val points: List<RoutePoint> by lazy { geometry.map { RoutePoint(it[0], it[1], it[2]) } }
 }
@@ -113,9 +115,25 @@ data class Maneuver(
     val modifier: String,
     @SerialName("road_name") val roadName: String,
     val instruction: String,
+    /** Which lanes to be in (from 정밀도로지도, or the usual lanes for the maneuver). */
+    val lanes: LaneHint? = null,
 ) {
     val turn: Turn get() = Turn.of(type, modifier)
 }
+
+/** `recommended` counts from 1 = 1차로 (leftmost). */
+@Serializable
+data class LaneHint(val count: Int, val recommended: List<Int>)
+
+@Serializable
+data class RouteAlert(
+    /** speed_camera, signal_camera, section_camera, traffic_light, speed_bump */
+    val type: String,
+    @SerialName("distance_m") val distanceM: Double,
+    @SerialName("speed_limit_kmh") val speedLimitKmh: Int? = null,
+    val label: String,
+    val note: String? = null,
+)
 
 @Serializable
 data class Curve(

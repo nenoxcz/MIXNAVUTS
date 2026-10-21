@@ -135,6 +135,42 @@ final class HudTests: XCTestCase {
     }
 }
 
+final class LaneAndAlertTests: XCTestCase {
+    func testFixtureCarriesLanesAndAlerts() throws {
+        let route = try motorwayRoute()
+        XCTAssertTrue(route.maneuvers.contains { $0.lanes != nil })
+        XCTAssertTrue(route.alerts.contains { $0.type == "speed_camera" && $0.speedLimitKmh == 100 })
+    }
+
+    func testLanesShownNearTheManeuverOnly() throws {
+        let route = try motorwayRoute()
+        let guided = try XCTUnwrap(route.maneuvers.first { $0.lanes != nil })
+        let tracker = RouteTracker(route: route)
+        let sim = RouteSimulator(route: route, startEpoch: route.depart)
+        var shownNear = false, shownFar = false
+        var t = 0.0
+        while t < route.durationS {
+            let fix = sim.fix(at: t)
+            let progress = tracker.update(fix)
+            let hud = Hud.build(progress: progress, fix: fix, vehicleSpeedMps: nil, timeZone: kst)
+            if progress.nextManeuver == guided, let lanes = hud.lanes {
+                if progress.distanceToManeuverM! <= Hud.lanesWithinM { shownNear = true } else { shownFar = true }
+                XCTAssertEqual(lanes.count, guided.lanes!.count)
+                XCTAssertEqual(lanes.indices.filter { lanes[$0] }.map { $0 + 1 }, guided.lanes!.recommended)
+            }
+            t += 3
+        }
+        XCTAssertTrue(shownNear)
+        XCTAssertFalse(shownFar)
+    }
+
+    func testAlertText() {
+        XCTAssertEqual(Format.alert(RouteAlert(type: "speed_bump", distanceM: 0, label: "과속방지턱"), distanceM: 150), "과속방지턱 · 150 m 앞")
+        XCTAssertNil(Format.alert(RouteAlert(type: "speed_bump", distanceM: 0, label: "과속방지턱"), distanceM: 400))
+        XCTAssertEqual(Format.alert(RouteAlert(type: "speed_camera", distanceM: 0, label: "과속 단속 100"), distanceM: 2), "과속 단속 100")
+    }
+}
+
 final class SessionTests: XCTestCase {
     final class FakeAPI: RoutesAPI, @unchecked Sendable {
         let reply: RouteOption?

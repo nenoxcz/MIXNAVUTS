@@ -23,6 +23,11 @@ data class HudState(
     val maneuverText: String?,
     val thenText: String?,
     val roadAhead: String?,
+    /** One entry per lane from 1차로 (left); true = use this lane. Shown near a lane-guided maneuver. */
+    val lanes: List<Boolean>?,
+    /** "과속 단속 60 · 300 m 앞" and the like, when a camera or speed bump is close. */
+    val alert: String?,
+    val alertType: String?,
     val roadName: String,
     val eta: String,
     val remainingDistance: String,
@@ -47,6 +52,18 @@ object Format {
 
     fun won(krw: Int): String = String.format(Locale.ROOT, "%,d원", krw)
 
+    /** How close an alert has to be before it is shown. */
+    fun alertRange(type: String): Double = when (type) {
+        "speed_bump" -> 200.0
+        "section_camera" -> 1_000.0
+        else -> 800.0
+    }
+
+    fun alert(alert: RouteAlert?, distanceM: Double?): String? {
+        if (alert == null || distanceM == null || distanceM > alertRange(alert.type)) return null
+        return if (distanceM < 5.0) alert.label else "${alert.label} · ${distance(distanceM)} 앞"
+    }
+
     /** Rally-style pace note for the next winding stretch, if it is close. */
     fun roadAhead(curve: Curve?, distanceM: Double?, withinM: Double = 1_500.0): String? {
         if (curve == null || distanceM == null || distanceM > withinM) return null
@@ -60,6 +77,8 @@ object Format {
 }
 
 object Hud {
+    const val LANES_WITHIN_M = 1_000.0
+
     fun build(progress: Progress, fix: Fix, vehicleSpeedMps: Double?, zone: ZoneId = ZoneId.systemDefault()): HudState {
         val speedMps = vehicleSpeedMps ?: fix.speedMps
         val speedKmh = speedMps?.let { (it * 3.6).roundToInt() }
@@ -86,6 +105,11 @@ object Hud {
                 ?.takeIf { next != null && it.distanceM - next.distanceM < 300 }
                 ?.let { "이어서 ${it.instruction}" },
             roadAhead = Format.roadAhead(progress.nextCurve, progress.distanceToCurveM),
+            lanes = next?.lanes
+                ?.takeIf { progress.state == GuidanceState.ON_ROUTE && (progress.distanceToManeuverM ?: Double.MAX_VALUE) <= LANES_WITHIN_M }
+                ?.let { hint -> (1..hint.count).map { it in hint.recommended } },
+            alert = Format.alert(progress.nextAlert, progress.distanceToAlertM),
+            alertType = progress.nextAlert?.type?.takeIf { Format.alert(progress.nextAlert, progress.distanceToAlertM) != null },
             roadName = progress.segment.roadName,
             eta = Format.clock(progress.eta, zone),
             remainingDistance = Format.distance(progress.remainingM),

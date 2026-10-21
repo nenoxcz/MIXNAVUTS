@@ -35,6 +35,9 @@ public struct Progress: Sendable {
     public var followingManeuver: Maneuver?
     public var nextCurve: Curve?
     public var distanceToCurveM: Double?
+    /// Next camera or speed bump ahead (traffic lights are left to the map).
+    public var nextAlert: RouteAlert?
+    public var distanceToAlertM: Double?
     public var snappedLat: Double
     public var snappedLon: Double
 }
@@ -123,6 +126,7 @@ public final class RouteTracker {
         let upcoming = route.maneuvers.filter { $0.type != "depart" && $0.distanceM > along + 1 }
         let next = upcoming.first
         let curve = route.curves.first { $0.endM > along }
+        let alert = route.alerts.first { $0.type != "traffic_light" && $0.distanceM > along - 5 }
 
         let p0 = points[min(max(piece, 0), points.count - 2)]
         let p1 = points[min(max(piece + 1, 1), points.count - 1)]
@@ -142,6 +146,8 @@ public final class RouteTracker {
             followingManeuver: upcoming.count > 1 ? upcoming[1] : nil,
             nextCurve: curve,
             distanceToCurveM: curve.map { max(0, $0.startM - along) },
+            nextAlert: alert,
+            distanceToAlertM: alert.map { max(0, $0.distanceM - along) },
             snappedLat: p0.lat + t * (p1.lat - p0.lat),
             snappedLon: p0.lon + t * (p1.lon - p0.lon)
         )

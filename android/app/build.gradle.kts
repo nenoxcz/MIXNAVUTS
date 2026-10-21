@@ -9,7 +9,7 @@ plugins {
 
 // 설정값: gradle 속성(-P) 또는 android/local.properties
 //   mixnavuts.api=http://192.168.0.10:8080   엔진 API 주소 (기본: 에뮬레이터에서 본 PC)
-//   naver.map.clientId=...                    네이버 지도 SDK 클라이언트 ID (없으면 기본 지도 그리기)
+//   mixnavuts.mapStyle=https://…/style.json   지도 스타일 (기본: 엔진의 자체 지도 {api}/v1/style.json, 빈 값이면 경로선만 그림)
 val localProperties = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
@@ -27,8 +27,9 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
-        buildConfigField("String", "MIXNAVUTS_API", "\"${setting("mixnavuts.api", "http://10.0.2.2:8080")}\"")
-        buildConfigField("String", "NAVER_MAP_CLIENT_ID", "\"${setting("naver.map.clientId")}\"")
+        val api = setting("mixnavuts.api", "http://10.0.2.2:8080")
+        buildConfigField("String", "MIXNAVUTS_API", "\"$api\"")
+        buildConfigField("String", "MAP_STYLE_URL", "\"${setting("mixnavuts.mapStyle", "$api/v1/style.json")}\"")
     }
 
     buildFeatures {
@@ -67,5 +68,5 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.car.app)
     implementation(libs.car.app.projected)
-    implementation(libs.naver.map)
+    implementation(libs.maplibre)
 }

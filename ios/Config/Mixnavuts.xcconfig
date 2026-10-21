@@ -2,8 +2,8 @@
 // 실기기에서는 Config/Local.xcconfig에 같은 이름으로 Mac의 IP를 넣는다. ("//"는 주석이라 "/$()/"로 쓴다)
 MIXNAVUTS_API_URL = http:/$()/localhost:8080
 
-// 네이버 클라우드 플랫폼 Maps 클라이언트 ID. 비워 두면 Apple 지도(MapKit)를 쓴다.
-NAVER_MAP_CLIENT_ID =
+// 지도 스타일. 기본은 엔진의 자체 지도(표준노드링크 벡터 타일 + 브이월드 배경). 비우면 Apple 지도(MapKit).
+MIXNAVUTS_MAP_STYLE_URL = $(MIXNAVUTS_API_URL)/v1/style.json
 
-// 개인 설정(키, 주소)은 버전 관리하지 않는 Local.xcconfig에 둔다.
+// 개인 설정(주소)은 버전 관리하지 않는 Local.xcconfig에 둔다.
 #include? "Local.xcconfig"

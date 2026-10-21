@@ -5,12 +5,13 @@ import MixnavutsKit
 import UIKit
 
 /// CarPlay navigation: destination list → trip preview with the engine's routes → guidance.
+/// The base view is the same map as the phone (the engine's own map through MapLibre, or MapKit).
 /// Maneuvers go to CPNavigationSession, which is also what CarPlay shows in the instrument
 /// cluster and HUD of cars that support it. Requires the CarPlay Navigation entitlement.
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPMapTemplateDelegate {
     private var interfaceController: CPInterfaceController?
     private var window: CPWindow?
-    private let mapController = RouteMapViewController()
+    private lazy var mapController: RouteMapDisplay = RouteMapFactory.make()
     private let mapTemplate = CPMapTemplate()
     private var trip: CPTrip?
     private var session: CPNavigationSession?

@@ -3,39 +3,40 @@ import MixnavutsKit
 import SwiftUI
 import UIKit
 
-/// The route on a map: 네이버 지도 when the NMapsMap package is linked and a client ID is
-/// configured, Apple MapKit otherwise. CarPlay always uses `RouteMapViewController` (MapKit).
-struct RouteMapView: View {
-    let route: RouteOption?
-    let position: (lat: Double, lon: Double)?
-    let bearing: Double?
-    let follow: Bool
+/// What the phone screen and the CarPlay window need from a map.
+protocol RouteMapDisplay: UIViewController {
+    func show(route: RouteOption?, fit: Bool)
+    func moveCar(lat: Double, lon: Double, bearing: Double?, follow: Bool)
+}
 
-    var body: some View {
-        if NaverMapSetup.enabled {
-            NaverRouteMapView(route: route, position: position, bearing: bearing, follow: follow)
-        } else {
-            MapKitRouteView(route: route, position: position, bearing: bearing, follow: follow)
-        }
+enum RouteMapFactory {
+    /// The engine's own map through MapLibre when the package is linked and a style URL is set;
+    /// Apple MapKit otherwise.
+    static func make() -> RouteMapDisplay {
+        #if canImport(MapLibre)
+        if let style = AppConfig.mapStyleURL { return MapLibreRouteViewController(styleURL: style) }
+        #endif
+        return RouteMapViewController()
     }
 }
 
-struct MapKitRouteView: UIViewControllerRepresentable {
+struct RouteMapView: UIViewControllerRepresentable {
     let route: RouteOption?
     let position: (lat: Double, lon: Double)?
     let bearing: Double?
     let follow: Bool
 
-    func makeUIViewController(context: Context) -> RouteMapViewController { RouteMapViewController() }
+    func makeUIViewController(context: Context) -> UIViewController { RouteMapFactory.make() }
 
-    func updateUIViewController(_ controller: RouteMapViewController, context: Context) {
-        controller.show(route: route, fit: !follow)
-        if let position { controller.moveCar(lat: position.lat, lon: position.lon, bearing: bearing, follow: follow) }
+    func updateUIViewController(_ controller: UIViewController, context: Context) {
+        guard let map = controller as? RouteMapDisplay else { return }
+        map.show(route: route, fit: !follow)
+        if let position { map.moveCar(lat: position.lat, lon: position.lon, bearing: bearing, follow: follow) }
     }
 }
 
 /// MapKit view with the route line and a car marker. Shared by the phone and the CarPlay window.
-final class RouteMapViewController: UIViewController, MKMapViewDelegate {
+final class RouteMapViewController: UIViewController, MKMapViewDelegate, RouteMapDisplay {
     let mapView = MKMapView()
     private var routeId: String?
     private let car = MKPointAnnotation()

@@ -13,10 +13,10 @@ settings:
 packages:
   MixnavutsKit:
     path: MixnavutsKit
-  # 네이버 지도 SDK. 빼려면 이 항목과 아래 dependency를 지우면 된다 (그러면 MapKit만 쓴다).
-  NMapsMap:
-    url: https://github.com/navermaps/SPM-NMapsMap
-    from: "3.18.0"
+  # 엔진의 자체 지도(/v1/style.json)를 그리는 오픈소스 지도 엔진. 빼면 Apple MapKit을 쓴다.
+  MapLibre:
+    url: https://github.com/maplibre/maplibre-gl-native-distribution
+    from: "6.0.0"
 targets:
   Mixnavuts:
     type: application
@@ -28,7 +28,7 @@ targets:
       Release: Config/Mixnavuts.xcconfig
     dependencies:
       - package: MixnavutsKit
-      - package: NMapsMap
+      - package: MapLibre
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mixnavuts.app
@@ -50,7 +50,7 @@ targets:
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
         MixnavutsAPIBaseURL: $(MIXNAVUTS_API_URL)
-        NaverMapClientID: $(NAVER_MAP_CLIENT_ID)
+        MixnavutsMapStyleURL: $(MIXNAVUTS_MAP_STYLE_URL)
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:

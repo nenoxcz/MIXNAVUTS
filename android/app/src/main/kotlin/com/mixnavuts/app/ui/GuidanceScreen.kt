@@ -41,6 +41,8 @@ fun GuidanceScreen(state: NavState, onStop: () -> Unit) {
                     Text(hud.maneuverText.orEmpty(), fontSize = 20.sp)
                 }
                 hud.thenText?.let { Text(it) }
+                hud.lanes?.let { lanes -> Text("차로  " + lanes.joinToString(" ") { if (it) "▣" else "▢" }) }
+                hud.alert?.let { Text(it) }
                 hud.roadAhead?.let { Text("ROAD AHEAD  $it") }
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text("${hud.speedKmh ?: "--"} km/h" + if (hud.speedSource == SpeedSource.VEHICLE) " (차량)" else "")

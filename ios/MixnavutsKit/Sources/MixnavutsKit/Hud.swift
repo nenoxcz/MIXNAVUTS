@@ -15,6 +15,11 @@ public struct HudState: Sendable {
     public var maneuverText: String?
     public var thenText: String?
     public var roadAhead: String?
+    /// One entry per lane from 1차로 (left); true = use this lane. Shown near a lane-guided maneuver.
+    public var lanes: [Bool]?
+    /// "과속 단속 60 · 300 m 앞" and the like, when a camera or speed bump is close.
+    public var alert: String?
+    public var alertType: String?
     public var roadName: String
     public var eta: String
     public var remainingDistance: String
@@ -51,6 +56,20 @@ public enum Format {
         return (formatter.string(from: NSNumber(value: krw)) ?? "\(krw)") + "원"
     }
 
+    /// How close an alert has to be before it is shown.
+    public static func alertRange(_ type: String) -> Double {
+        switch type {
+        case "speed_bump": return 200
+        case "section_camera": return 1_000
+        default: return 800
+        }
+    }
+
+    public static func alert(_ alert: RouteAlert?, distanceM: Double?) -> String? {
+        guard let alert, let distanceM, distanceM <= alertRange(alert.type) else { return nil }
+        return distanceM < 5 ? alert.label : "\(alert.label) · \(distance(distanceM)) 앞"
+    }
+
     /// Rally-style pace note for the next winding stretch, if it is close.
     public static func roadAhead(_ curve: Curve?, distanceM: Double?, within: Double = 1_500) -> String? {
         guard let curve, let distanceM, distanceM <= within else { return nil }
@@ -65,6 +84,8 @@ public enum Format {
 }
 
 public enum Hud {
+    public static let lanesWithinM = 1_000.0
+
     public static func build(progress: Progress, fix: Fix, vehicleSpeedMps: Double?, timeZone: TimeZone = .current) -> HudState {
         let speedMps = vehicleSpeedMps ?? fix.speedMps
         let speedKmh = speedMps.map { Int(($0 * 3.6).rounded()) }
@@ -76,6 +97,11 @@ public enum Hud {
         case .offRoute: text = "경로를 벗어났습니다 · 재탐색"
         case .onRoute: text = next?.instruction
         }
+        var lanes: [Bool]?
+        if let hint = next?.lanes, progress.state == .onRoute, (progress.distanceToManeuverM ?? .infinity) <= lanesWithinM {
+            lanes = (1...max(1, hint.count)).map { hint.recommended.contains($0) }
+        }
+        let alertText = Format.alert(progress.nextAlert, distanceM: progress.distanceToAlertM)
         var then: String?
         if let next, let following = progress.followingManeuver, following.distanceM - next.distanceM < 300 {
             then = "이어서 \(following.instruction)"
@@ -91,6 +117,9 @@ public enum Hud {
             maneuverText: text,
             thenText: then,
             roadAhead: Format.roadAhead(progress.nextCurve, distanceM: progress.distanceToCurveM),
+            lanes: lanes,
+            alert: alertText,
+            alertType: alertText == nil ? nil : progress.nextAlert?.type,
             roadName: progress.segment.roadName,
             eta: Format.clock(progress.eta, timeZone: timeZone),
             remainingDistance: Format.distance(progress.remainingM),

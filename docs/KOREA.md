@@ -1,125 +1,142 @@
-# 한국 실데이터·지도 연동
+# 국가 공간정보로 만드는 자체 지도·내비 API
 
-엔진이 실제 도로망과 실시간 교통으로 경로를 찾고, 앱이 국내 지도 위에 보여 주기 위한 설정이다. 외부 서비스 키는 **엔진 서버에만** 두고 앱에는 넣지 않는다. 지도 SDK 키는 앱에 들어가는 공개 키라서 예외다.
+MIXNAVUTS는 상용 지도 SDK(네이버·카카오·T맵)에 기대지 않는다. 국가가 공개하는 도로·지도·교통 데이터를 엔진 서버가 직접 읽어 **경로 탐색, 차로 안내, 지도 타일, 장소 검색을 모두 자체 API로** 제공한다. 앱은 이 API만 호출하고, 지도는 오픈소스 MapLibre로 그린다.
 
-## 한눈에
+```
+국가 데이터                                MIXNAVUTS Engine (자체 API)                       앱
+국가표준노드링크 (ITS) ──── 도로망 ──────▶ 경로 탐색 ── POST /v1/routes ──────────────▶ 안내·HUD
+정밀도로지도 (국토지리정보원) ─ 차로·신호등 ▶   ├─ 차로 안내, 경고                          Android Auto
+무인단속카메라 (경찰청) ──── 경고 ─────────▶   │                                          CarPlay
+ITS 교통소통·돌발 ──────── 실시간 ─────────▶   └─ 시간 의존 ETA
+                                             벡터 타일 ── GET /v1/tiles/{z}/{x}/{y}.mvt ─▶ MapLibre
+브이월드 (국토교통부) ───── 배경지도 ────────▶ 타일 중계 ── GET /v1/basemap/…, /v1/style.json
+브이월드 검색·도로명주소 ── 장소·주소 ───────▶ 검색 ────── GET /v1/search
+```
 
-| 용도 | 서비스 | 쓰는 곳 | 키 위치 | 검증 상태 |
+키는 모두 **서버 환경 변수**에만 둔다. 앱에는 엔진 주소 말고 아무 키도 들어가지 않는다.
+
+## 데이터별 정리
+
+| 데이터 | 제공 | 쓰는 곳 | 형식·키 | 검증 상태 |
 | --- | --- | --- | --- | --- |
-| 실시간 구간 속도 | 국가교통정보센터(ITS) 교통소통정보 | `mixnavuts/korea/its.py` | 서버 환경 변수 `ITS_API_KEY` | 공개 응답 형식으로 만든 테스트 데이터만. 실제 키로는 미확인 |
-| 사고·공사·통제 | ITS 돌발상황정보 | 같음 | 같음 | 같음 |
-| 도로망 | 국가표준노드링크 | `mixnavuts/korea/nodelink.py` | — | 직접 만든 shapefile로 테스트. 실제 배포 파일의 필드명은 확인 필요 |
-| 좌표 변환 | EPSG 5179·5181·5185~5188 | `mixnavuts/korea/tm.py` | — | pyproj와 비교해 한국 전역 오차 7 cm 이하 |
-| 목적지 검색 | 카카오 로컬 API | `mixnavuts/korea/kakao.py` | 서버 환경 변수 `KAKAO_REST_API_KEY` | 공개 응답 형식 테스트만 |
-| 지도 표시 (Android) | 네이버 지도 SDK | `android/app/.../ui/map` | `android/local.properties` | 빌드 미확인 |
-| 지도 표시 (iOS) | 네이버 지도 SDK(SPM), 없으면 Apple MapKit | `ios/Mixnavuts/Views` | `ios/Config/Local.xcconfig` | 빌드 미확인 |
+| 국가표준노드링크 | ITS 국가교통정보센터 | 도로망, 차로 수(`LANES`) | SHP, 키 없음 | 직접 만든 shapefile로 테스트 |
+| 정밀도로지도 | 국토지리정보원 | 차로 단위 안내, 신호등, 과속방지턱 | SHP(A2_LINK 등), 회원가입 후 다운로드 | 직접 만든 shapefile로 테스트 |
+| 무인교통단속카메라 | 경찰청 (공공데이터포털 표준데이터) | 단속카메라 경고 | CSV, 키 없음 | 직접 만든 CSV로 테스트 |
+| 교통소통·돌발상황 | ITS 국가교통정보센터 오픈API | 실시간 속도, 사고·공사 | `ITS_API_KEY` | 형식 테스트 |
+| 배경지도 (WMTS) | 브이월드 (국토교통부) | `/v1/basemap` 중계 | `VWORLD_API_KEY` | 형식 테스트 |
+| 장소·주소 검색 | 브이월드 검색 API | `/v1/search` | `VWORLD_API_KEY` | 형식 테스트 |
+| 도로명주소 | 행정안전부 도로명주소 API | `/v1/search` (주소→좌표) | `JUSO_SEARCH_KEY`, `JUSO_COORD_KEY` | 형식 테스트. 좌표 변환(UTM-K)은 검증 |
+| 좌표계 | — | 모든 SHP | EPSG 5179·5181·5185~5188, `.prj` 자동 인식 | pyproj와 비교해 오차 7 cm 이하 |
 
-이 저장소를 만든 환경에서는 위 서비스에 접속할 수 없었다. 그래서 연동 코드는 공개 문서의 형식대로 만든 응답으로만 테스트했다. 실제 키를 넣은 뒤 아래 "처음 확인할 것"부터 점검한다.
+이 저장소를 만든 환경에서는 위 기관 서버에 접속할 수 없었다. 그래서 공개 형식대로 만든 데이터로만 테스트했다. 실제 파일과 키로 처음 띄울 때 아래 "처음 확인할 것"을 점검한다.
 
-## 1. 국가표준노드링크 (도로망)
+## 1. 도로망: 국가표준노드링크
 
-1. ITS 국가교통정보센터 사이트의 표준노드링크 자료실에서 최신 전국 파일을 받는다.
-2. 압축을 풀면 `MOCT_NODE.shp`와 `MOCT_LINK.shp`가 있다. `.dbf`, `.shx`, `.prj`도 같은 폴더에 둔다.
-3. 필드와 좌표계를 확인한다.
+1. ITS 국가교통정보센터 자료실에서 표준노드링크 최신 파일을 받는다(`MOCT_NODE.shp`, `MOCT_LINK.shp` 등).
+2. 필드와 좌표계를 확인한다.
 
    ```bash
-   pip install "mixnavuts[korea]"        # pyshp (shapefile 읽기)
+   pip install "mixnavuts[korea]"                       # pyshp
    python -m mixnavuts nodelink-info ~/data/nodelink
    ```
 
-   로더는 다음 필드를 쓴다.
-   - 노드: `NODE_ID`, `NODE_NAME`
-   - 링크: `LINK_ID`, `F_NODE`, `T_NODE`, `ROAD_RANK`, `ROAD_NAME`, `ROAD_NO`, `MAX_SPD`, `LENGTH`, `CONNECT`
+   - 노드 필드: `NODE_ID`, `NODE_NAME`
+   - 링크 필드: `LINK_ID`, `F_NODE`, `T_NODE`, `ROAD_RANK`, `ROAD_NAME`, `ROAD_NO`, `MAX_SPD`, `LENGTH`, `LANES`, `CONNECT`
+   - 필드명은 대소문자를 가리지 않는다. 좌표계는 `.prj`에서 읽는다.
 
-   이름이 다르면 `nodelink.py`의 `_text(...)` 호출을 고친다. 좌표계는 `.prj`를 보고 `--epsg`로 넘긴다(기본 5186).
-4. 범위를 정해 서버를 띄운다. 순수 Python이라 전국은 무겁다. 수도권 정도로 시작한다.
+## 2. 차로·신호등·과속방지턱: 정밀도로지도
 
-   ```bash
-   python -m mixnavuts serve --network nodelink --nodelink ~/data/nodelink \
-       --bbox 126.76,37.41,127.18,37.70
-   ```
+국토지리정보원이 자율주행용으로 공개하는 정밀도로지도(HD map)다. 국토정보플랫폼에서 지역별로 받는다. 쓰는 레이어는 셋이다.
 
-도로 등급은 `ROAD_RANK`로 나눈다. 101 고속국도 → 고속도로, 102 도시고속국도와 103 일반국도 → 국도급, 104 → 간선, 105·106 → 보조간선, 107·108 → 이면도로다. `CONNECT`가 연결로이면 IC·JC 램프로 본다. 굴곡도는 링크 형상에서 계산하므로 실제 와인딩 도로를 그대로 찾는다.
+| 레이어 | 쓰는 필드 | 용도 |
+| --- | --- | --- |
+| `A2_LINK` 차로 중심선 | `ID`, `LaneNo`, `FromNodeID`, `ToNodeID`, `ITSLinkID`, `Length` | 차로 수, 차로 단위 연결 |
+| `C1_TRAFFICLIGHT` 신호등 | `LinkID` | 경로 경고 |
+| `C4_SPEEDBUMP` 과속방지턱 | `LinkID` | 경로 경고 |
 
-**통행료는 근사값이다.** 고속도로 링크 길이 × 44.3원/km로 계산한다. 폐쇄식 고속도로 요금은 진입·진출 영업소 쌍으로 정해지므로, 정확한 값은 한국도로공사 영업소 간 요금 자료를 붙여야 나온다(아래 "다음 단계").
+**핵심은 `ITSLinkID`다.** 정밀도로지도의 차로 링크마다 표준링크ID가 들어 있어서, 표준노드링크 도로망에 지도 매칭 없이 바로 붙는다.
 
-## 2. ITS 실시간 교통·돌발 정보
+차로 안내는 이렇게 계산한다.
 
-1. ITS 국가교통정보센터의 오픈 API에서 인증키를 신청한다. 교통소통정보와 돌발상황정보를 쓴다.
-2. 키를 서버 환경 변수로 넣고 실행한다.
+- **차로 수**: 표준링크에 속한 차로 링크의 최대 `LaneNo`
+- **써야 할 차로**: 링크 A에서 B로 갈 때, A의 끝 차로 중 교차로 연결 링크(`ITSLinkID` 없음, 300 m 이내)를 따라 B의 차로에 닿는 차로. 1 = 1차로(가장 왼쪽)다.
+- **정밀도로지도가 없는 도로**: 표준노드링크의 `LANES`와 회전 방향으로 대략 정한다(좌회전 → 1차로, 우회전 → 끝 차로 등).
 
-   ```bash
-   export ITS_API_KEY=발급받은_키
-   python -m mixnavuts serve --network nodelink --nodelink ~/data/nodelink --bbox 126.76,37.41,127.18,37.70
-   curl localhost:8080/v1/health     # live.source가 "its", observed_links > 0 인지 확인
-   ```
+```bash
+python -m mixnavuts hdmap-info ~/data/hdmap          # 레이어·필드·좌표계 확인
+```
 
-동작 방식은 이렇다.
+정밀도로지도는 조사가 끝난 구간(고속도로, 주요 국도, 일부 도심)만 있다. 범위는 국토지리정보원 공개 현황을 본다.
 
-- **갱신**: 요청이 들어올 때, 마지막 조회 후 5분이 지났으면 다시 가져온다. ITS 갱신 주기에 맞춘 값이다. 조회가 실패하면 직전 데이터를 계속 쓴다.
-- **링크 연결**: 속도는 `linkId`(표준링크ID)로 링크에 바로 붙는다. 속도 0은 "데이터 없음"으로 본다.
-- **돌발상황 반영**: 종류별로 그 링크의 속도 상한을 정한다. 통제 0, 사고 0.3, 공사·고장 0.5, 기상 0.7. 종료 시각이 없으면 1시간 뒤(최소 지금부터 15분)를 해소 예상 시각으로 잡는다. 표는 `its.py`의 `EVENT_SPEED_FACTOR`다.
+## 3. 단속카메라: 경찰청 무인교통단속카메라 표준데이터
 
-### 지금 바로: 속도 아카이브
+공공데이터포털에서 "전국무인교통단속카메라표준데이터" CSV를 받는다.
 
-ETA 백테스트와 "시간대별 평소 속도" 학습에는 과거 데이터가 필요하다. 서버 한 대에서 계속 돌려 둔다.
+- **읽는 열**: `위도`, `경도`, `단속구분`, `제한속도`, `단속구간위치구분`, `설치장소`. 인코딩은 UTF-8과 CP949를 모두 읽는다.
+- **도로 연결**: 카메라에서 25 m 안의 도로 링크에 붙인다.
+- **단속 종류**: 과속, 신호, 구간을 구분한다. 주정차 단속은 주행 경고가 아니라서 뺀다.
+- **알려진 한계**: 카메라가 어느 방향 차로를 찍는지 이 파일만으로는 알 수 없다. 그래서 지금은 양방향 모두에 경고가 뜬다. `도로노선방향` 코드를 실제 데이터로 확인한 뒤 좁힐 수 있다.
+
+## 4. 실시간 교통: ITS 오픈API
+
+`ITS_API_KEY`를 넣으면 교통소통정보와 돌발상황정보를 5분마다 가져온다. 링크 ID가 같아서 표준노드링크·정밀도로지도와 그대로 맞물린다. 과거 속도는 계속 저장해 둔다. ETA 검증과 시간대별 평소 속도 학습에 필요하다.
 
 ```bash
 ITS_API_KEY=… python -m mixnavuts archive --bbox 126.76,37.41,127.18,37.70 --db its.sqlite
-python -m mixnavuts serve --network nodelink --nodelink ~/data/nodelink --bbox … --archive its.sqlite
 ```
 
-`--archive`를 주면 링크별·15분 단위로 평일 중앙값 속도를 평소 패턴으로 쓴다. 데이터가 없는 링크는 도로 등급별 기본 패턴을 쓴다.
+## 5. 자체 지도: 벡터 타일 + 브이월드 배경
 
-## 3. 카카오 로컬 (목적지 검색)
+엔진이 지도를 직접 서빙한다.
 
-1. Kakao Developers에서 애플리케이션을 만들고 REST API 키를 받는다. 콘솔에서 로컬(카카오맵) API 사용 설정이 필요할 수 있다.
-2. `export KAKAO_REST_API_KEY=…` 후 `serve`. `/v1/health`의 `search`가 `kakao`가 된다.
+| 경로 | 내용 |
+| --- | --- |
+| `GET /v1/tiles/{z}/{x}/{y}.mvt` | 도로망 벡터 타일(Mapbox Vector Tile 2.1). `roads`(등급·이름·표준링크ID·차로 수), `alerts`(카메라·신호등·과속방지턱) |
+| `GET /v1/basemap/{z}/{x}/{y}.png` | 브이월드 WMTS를 서버가 받아 넘긴다. 키를 숨기고 메모리 캐시를 둔다 |
+| `GET /v1/style.json` | MapLibre 스타일 |
 
-검색 결과는 좌표로 경로를 요청한다. 앱이 위치를 알면 가까운 순으로 정렬한다.
+`style.json`은 브이월드 키가 있으면 브이월드 배경 위에 경고 지점을 얹는다. 키가 없으면 도로망 자체를 지도로 그린다.
 
-## 4. 네이버 지도 (앱 지도 표시)
+- **브이월드 키**: vworld.kr에서 발급한다. 서비스 URL에 묶인 키면 그 URL을 `VWORLD_DOMAIN`에 넣는다.
+- **배경 레이어**: `--basemap`으로 고른다(Base, white, midnight, Hybrid, Satellite).
+- **이용 조건**: 운영 전에 브이월드 이용약관에서 캐시·중계·호출량 조건을 확인한다.
 
-네이버 클라우드 플랫폼 콘솔의 Maps에서 Application을 등록한다. Mobile Dynamic Map을 선택하고 아래 두 식별자를 넣는다.
+## 6. 검색: 브이월드 · 도로명주소
 
-- Android 패키지 이름 `com.mixnavuts.app`
-- iOS Bundle ID `com.mixnavuts.app`
+| 제공자 | 방식 | 키 |
+| --- | --- | --- |
+| 브이월드 검색 (`vworld`) | 장소(POI)를 먼저 찾고, 없으면 도로명 주소를 찾는다. 위치를 주면 가까운 순으로 정렬한다 | `VWORLD_API_KEY` |
+| 도로명주소 API (`juso`) | 행정안전부 주소 DB에서 찾고, 좌표제공 API로 좌표(UTM-K → WGS84)를 받는다 | 검색 키와 좌표 키 두 개 |
 
-**Android**: `android/local.properties`
+`--search auto`(기본)는 브이월드 → 도로명주소 → 카카오(`KAKAO_REST_API_KEY`, 선택) → 도로망 노드 이름 순으로 쓸 수 있는 것을 고른다.
 
-```properties
-naver.map.clientId=발급받은_ID
-mixnavuts.api=http://192.168.0.10:8080
+## 한 번에 띄우기
+
+```bash
+export ITS_API_KEY=… VWORLD_API_KEY=… JUSO_SEARCH_KEY=… JUSO_COORD_KEY=…
+python -m mixnavuts serve --network nodelink \
+    --nodelink ~/data/nodelink \
+    --hdmap ~/data/hdmap \
+    --cameras ~/data/무인교통단속카메라.csv \
+    --archive its.sqlite \
+    --bbox 126.76,37.41,127.18,37.70
+curl localhost:8080/v1/health
 ```
 
-**iOS**: `ios/Config/Local.xcconfig` (git에 올라가지 않는다)
+순수 Python이라 범위는 수도권 정도로 시작한다. 전국 규모는 탐색 가속(Contraction Hierarchies 등)이나 핵심 탐색의 Rust·C++ 이식이 필요하다.
 
-```
-NAVER_MAP_CLIENT_ID = 발급받은_ID
-MIXNAVUTS_API_URL = http:/$()/192.168.0.10:8080
-```
+## 처음 확인할 것
 
-키가 없으면 Android는 경로선만 그리는 기본 화면을 쓰고, iOS는 Apple MapKit을 쓴다. 차량 화면은 키와 상관없이 따로 그린다.
-
-- Android Auto: 지도 SDK를 차량 화면(Surface)에 띄울 수 없어 앱이 직접 그린다.
-- CarPlay: MapKit을 쓴다.
-
-**SDK 버전과 인증 방식은 처음 빌드할 때 확인한다.** 2025년 네이버 클라우드 Maps 개편 뒤 새로 발급하는 키는 새 인증 방식을 쓴다(Android `NcpKeyClient`, iOS `ncpKeyId`). 그 경우 두 가지를 바꾼다.
-
-- SDK 버전: `android/gradle/libs.versions.toml`의 `naver-map`, `ios/project.yml`의 `NMapsMap`
-- 인증 코드: `NaverMapSetup`(Android `NaverRouteMap.kt`, iOS `NaverRouteMapView.swift`)
-
-## 처음 확인할 것 (실제 키를 넣은 뒤)
-
-1. `nodelink-info` 출력의 필드명이 로더와 같은지.
-2. `/v1/health`에서 `live.observed_links`가 0보다 큰지. 0이면 링크 ID 형식을 확인한다. ITS 응답의 `linkId`와 표준노드링크 `LINK_ID`의 자릿수·문자열 형태가 같아야 한다.
-3. `its.py`의 `_items` / `traffic` / `events`가 실제 응답 필드명(`linkId`, `speed`, `createdDate`, `eventType`, `startDate`, `endDate`)과 맞는지.
-4. 카카오 검색 결과가 `/v1/search`로 나오는지.
-5. 네이버 지도가 앱에서 뜨는지, 인증 오류(401)가 없는지.
+1. `nodelink-info`, `hdmap-info`의 필드명과 `.prj`가 로더와 맞는지.
+2. 서버 시작 로그의 "차로 수 연결" 수. 0이면 `ITSLinkID`와 `LINK_ID`의 자릿수·형식이 다른 것이다.
+3. 정밀도로지도가 있는 교차로에서 `/v1/routes` 응답의 `maneuvers[].lanes`가 실제 차선과 맞는지. 교차로 연결 링크가 `ITSLinkID`를 비워 두는지에 따라 로더의 `_reaches` 규칙을 조정해야 할 수 있다.
+4. 단속카메라 CSV의 `단속구분` 값이 코드(01, 02 …)인지 글자인지.
+5. `/v1/health`의 `live.observed_links`가 0보다 큰지(ITS).
+6. 앱 지도에 브이월드 배경과 경고 점이 뜨는지.
 
 ## 다음 단계
 
-- **통행료**: 한국도로공사 공공데이터의 영업소 간 통행요금을 붙인다. 고속도로 진입·진출 영업소 쌍으로 계산하고, 휴게소 정보도 같은 곳에서 가져온다.
-- **회전 제한·회전 비용**: 표준노드링크의 회전 정보를 쓰는 링크 기반(edge-based) 그래프로 바꾼다. 도심 ETA 오차의 큰 원인이다.
-- **지자체 소통 정보**: 서울 TOPIS 등을 추가한다. ITS와 링크 체계가 다르면 매칭이 필요하다.
-- **성능**: 전국 규모 탐색에는 Contraction Hierarchies 같은 전처리, 또는 핵심 탐색의 Rust·C++ 이식이 필요하다.
+- **통행료**: 한국도로공사 영업소 간 요금을 붙인다. 지금은 고속도로 링크 길이 × 44.3원/km로 근사한다.
+- **지도 글꼴**: 한글 글꼴(Noto Sans KR glyph PBF)을 서빙하고 도로명 라벨 레이어를 추가한다. 그러면 브이월드 없이도 완전한 지도가 된다.
+- **차로 형상**: 정밀도로지도 `B2_SURFACELINEMARK`(차선)를 타일에 넣으면 교차로 확대도를 그릴 수 있다.
+- **회전 제한**: 표준노드링크 회전 정보로 링크 기반(edge-based) 탐색을 한다.

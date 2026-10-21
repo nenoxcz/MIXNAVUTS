@@ -9,31 +9,32 @@
 ## 구성
 
 ```
-mixnavuts/          MIXNAVUTS Engine (Python): 후보 경로 탐색 · 교통 예측 · ETA · HTTP API
-  korea/            국가표준노드링크 · ITS 실시간 교통 · 카카오 장소 검색 · 좌표 변환 · 속도 아카이브
+mixnavuts/          MIXNAVUTS Engine (Python): 경로 탐색 · 교통 예측 · ETA · 차로 안내 · 자체 지도 타일 · HTTP API
+  korea/            국가 데이터: 표준노드링크 · 정밀도로지도 · 단속카메라 · ITS · 브이월드 · 도로명주소 · 좌표계
 android/            Android 앱
-  core/             플랫폼 독립 Kotlin: API 클라이언트 · 경로 추적 · 재탐색 · HUD 상태 · 시뮬레이터
-  app/              휴대폰 화면(Compose) · 네이버 지도 · Android Auto · 계기판(cluster)
+  core/             플랫폼 독립 Kotlin: API 클라이언트 · 경로 추적 · 재탐색 · HUD 상태(차로·경고) · 시뮬레이터
+  app/              휴대폰 화면(Compose) · MapLibre 지도 · Android Auto(차로 안내) · 계기판(cluster)
 ios/                iOS 앱
   MixnavutsKit/     Swift 패키지: android/core와 같은 로직
-  Mixnavuts/        휴대폰 화면(SwiftUI) · MapKit/네이버 지도 · CarPlay
+  Mixnavuts/        휴대폰 화면(SwiftUI) · MapLibre 지도(없으면 MapKit) · CarPlay
 shared/fixtures/    API 응답 샘플 (세 플랫폼 테스트가 공유)
 docs/               구상 · API 명세 · 한국 데이터 연동
 ```
 
-앱은 엔진 API만 호출한다([docs/API.md](docs/API.md)). 외부 서비스 키(ITS, 카카오)는 서버에만 둔다. 휴대폰 화면은 디자인을 입히기 전의 최소 레이아웃이다. 안내 내용(HUD 상태, 문구, 거리·시간 형식)은 코어가 정하고, 화면 파일은 배치만 한다.
+상용 지도 SDK 없이, 국가 공개 데이터로 경로·차로 안내·지도 타일·검색을 모두 엔진의 자체 API로 제공한다([docs/KOREA.md](docs/KOREA.md)). 앱은 이 API만 호출하고([docs/API.md](docs/API.md)) 지도는 오픈소스 MapLibre로 그린다. 외부 키(ITS, 브이월드, 도로명주소)는 서버에만 둔다. 휴대폰 화면은 디자인을 입히기 전의 최소 레이아웃이다. 안내 내용(HUD 상태, 문구, 거리·시간 형식)은 코어가 정하고, 화면 파일은 배치만 한다.
 
 ## 현재 상태
 
 | 영역 | 있음 | 검증 |
 | --- | --- | --- |
-| 엔진 | 후보 생성, 시간 의존 ETA, 선호·다양성 선택, 백테스트, 턴바이턴 안내 생성, HTTP API | Python 테스트 49개 |
-| 한국 데이터 | 표준노드링크 로더, ITS 교통·돌발 피드, 카카오 검색, TM 좌표 변환, ITS 아카이브 | 형식 테스트. 좌표 변환은 pyproj와 비교. 실제 키로는 미확인 ([docs/KOREA.md](docs/KOREA.md)) |
-| Android core | 경로 추적, 이탈 판정, 재탐색, HUD, 시뮬레이터 | JUnit 15개 (JVM) |
-| Android app | Compose 화면, 네이버 지도, Android Auto(목적지·미리보기·안내), `updateTrip`으로 계기판·HUD 전달, 차량 속도, 계기판 세션 | **빌드 미확인** (이 환경에서 Google Maven 차단). 문법 검사(ktlint)만 |
-| iOS | MixnavutsKit, SwiftUI 화면, MapKit/네이버 지도, CarPlay 안내 | **빌드 미확인** (Xcode 없음). 문법 검사(tree-sitter)만. Kit 테스트는 작성만 |
+| 엔진 | 후보 생성, 시간 의존 ETA, 선호·다양성 선택, 백테스트, 턴바이턴·차로 안내, 경로 경고, HTTP API | Python 테스트 73개 |
+| 자체 지도 API | 도로망 벡터 타일(MVT), MapLibre 스타일, 브이월드 배경지도 중계 | 타일은 표준 디코더(mapbox-vector-tile)와 대조 |
+| 국가 데이터 | 표준노드링크, 정밀도로지도(차로·신호등·과속방지턱), 경찰청 단속카메라, ITS 교통·돌발, 브이월드·도로명주소 검색, 좌표계 자동 인식, ITS 아카이브 | 공개 형식대로 만든 데이터로 테스트. 좌표 변환은 pyproj와 비교. 실제 파일·키로는 미확인 |
+| Android core | 경로 추적, 이탈 판정, 재탐색, HUD(차로·경고), 시뮬레이터 | JUnit 18개 (JVM, Kotlin 2.2) |
+| Android app | Compose 화면, MapLibre 지도, Android Auto(목적지·미리보기·안내·차로), `updateTrip`으로 계기판·HUD 전달, 차량 속도, 계기판 세션 | **빌드 미확인** (이 환경에서 Google Maven 차단). 문법 검사(ktlint)만 |
+| iOS | MixnavutsKit, SwiftUI 화면, MapLibre/MapKit, CarPlay 안내 | **빌드 미확인** (Xcode 없음). 문법 검사(tree-sitter)만. Kit 테스트는 작성만 |
 
-아직 없는 것: 교차로 회전 비용, 차로 안내, 정확한 폐쇄식 통행료, 다수 차량 분배, 디자인.
+아직 없는 것: 교차로 회전 비용, 정확한 폐쇄식 통행료, 지도 한글 라벨(글꼴 서빙), 다수 차량 분배, 디자인.
 
 ## 빠른 시작
 
@@ -63,19 +64,22 @@ MIXNAVUTS · 서부터미널 → 동부산업단지 · 출발 08:10 · 모드 ba
 ...
 ```
 
-실제 도로망과 실시간 교통으로 띄우는 방법은 [docs/KOREA.md](docs/KOREA.md)에 있다.
+국가 데이터(표준노드링크·정밀도로지도·단속카메라·ITS·브이월드)로 띄우는 방법은 [docs/KOREA.md](docs/KOREA.md)에 있다.
 
 ```bash
 pip install "mixnavuts[korea]"
-ITS_API_KEY=… KAKAO_REST_API_KEY=… python -m mixnavuts serve --network nodelink \
-    --nodelink ~/data/nodelink --bbox 126.76,37.41,127.18,37.70
+ITS_API_KEY=… VWORLD_API_KEY=… python -m mixnavuts serve --network nodelink \
+    --nodelink ~/data/nodelink --hdmap ~/data/hdmap --cameras ~/data/cameras.csv \
+    --bbox 126.76,37.41,127.18,37.70
 ```
+
+지도는 `http://localhost:8080/v1/style.json`을 MapLibre(웹·Android·iOS)에 넣으면 바로 보인다.
 
 ### Android
 
 Android Studio로 `android/`를 연다. 에뮬레이터는 PC의 엔진(`http://10.0.2.2:8080`)에 붙는다.
 
-- **설정**: 실기기 주소와 네이버 지도 키는 `android/local.properties`에 넣는다(`mixnavuts.api=…`, `naver.map.clientId=…`).
+- **설정**: 실기기에서 쓸 엔진 주소는 `android/local.properties`에 넣는다(`mixnavuts.api=…`). 지도는 엔진의 `/v1/style.json`을 MapLibre로 그린다.
 - **코어 테스트**: `./gradlew :core:test`
 - **Android Auto**: Desktop Head Unit(DHU)으로 확인한다.
   1. 휴대폰 Android Auto 설정에서 개발자 모드를 켜고 "알 수 없는 출처"를 허용한다.
@@ -89,7 +93,7 @@ brew install xcodegen
 cd ios && xcodegen generate && open Mixnavuts.xcodeproj
 ```
 
-- **설정**: 엔진 주소와 네이버 지도 키는 `ios/Config/Local.xcconfig`에 넣는다(형식은 `Config/Mixnavuts.xcconfig` 참고).
+- **설정**: 엔진 주소는 `ios/Config/Local.xcconfig`에 넣는다(형식은 `Config/Mixnavuts.xcconfig` 참고). 지도는 MapLibre 패키지로 엔진의 `/v1/style.json`을 그린다. 패키지를 빼면 MapKit을 쓴다.
 - **Kit 테스트**: `cd ios/MixnavutsKit && swift test`
 - **CarPlay**: Xcode 시뮬레이터의 I/O → External Displays → CarPlay에서 확인한다. 실기기에서 쓰려면 Apple에 CarPlay 내비게이션 앱 권한을 신청해야 한다.
 
@@ -153,9 +157,11 @@ live+history+incidents      0.49    1.13   -0.26     2.5      97    0.22    0.05
 | `mixnavuts/guidance.py` | Navigation | 턴바이턴 안내 문구, 굽은 구간(페이스노트), 링크별 예측 시각 |
 | `mixnavuts/network.py` | — | 실제 좌표에 놓인 도로망, 가까운 노드 찾기 |
 | `mixnavuts/api.py` | — | HTTP API |
-| `mixnavuts/korea/` | Traffic·Connect | 표준노드링크, ITS, 카카오, TM 좌표계, 아카이브 |
+| `mixnavuts/roadinfo.py` | Navigation | 링크별 차로 수, 차로 추천, 경로 경고(카메라·신호등·과속방지턱) |
+| `mixnavuts/tiles.py`, `mapstyle.py` | — | 벡터 타일(MVT) 인코더, MapLibre 스타일 |
+| `mixnavuts/korea/` | Traffic·Connect | 표준노드링크, 정밀도로지도, 단속카메라, ITS, 브이월드, 도로명주소, 카카오, 좌표계, 아카이브 |
 | `mixnavuts/backtest.py` | — | ETA 정확도·최적 경로 적중률 검증 |
 | `mixnavuts/synthetic.py` | — | 합성 도시 (격자 도로, 고속도로 2개·JC, 국도, 산악도로). 지도에서 가짜임이 드러나도록 인천 앞바다에 놓았다 |
-| `mixnavuts/cli.py` | — | `serve`, `route`, `archive`, `backtest`, `places`, `nodelink-info` |
+| `mixnavuts/cli.py` | — | `serve`, `route`, `archive`, `backtest`, `places`, `nodelink-info`, `hdmap-info` |
 
 Distribution(다수 차량 분배)은 아직 구현하지 않았다. 순서와 이유는 [docs/CONCEPT.md](docs/CONCEPT.md#로드맵)에 있다.

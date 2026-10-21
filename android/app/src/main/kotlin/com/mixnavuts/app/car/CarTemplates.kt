@@ -12,6 +12,8 @@ import androidx.car.app.model.DateTimeWithZone
 import androidx.car.app.model.Distance
 import androidx.car.app.model.Template
 import androidx.car.app.navigation.model.Destination
+import androidx.car.app.navigation.model.Lane
+import androidx.car.app.navigation.model.LaneDirection
 import androidx.car.app.navigation.model.Maneuver
 import androidx.car.app.navigation.model.MessageInfo
 import androidx.car.app.navigation.model.NavigationTemplate
@@ -53,7 +55,10 @@ object CarTemplates {
             GuidanceState.ON_ROUTE -> {
                 val next = progress.nextManeuver
                 if (next != null) {
-                    val routing = RoutingInfo.Builder().setCurrentStep(step(next), distance(progress.distanceToManeuverM ?: 0.0))
+                    val lanes = update.hud.lanes // only set near the maneuver
+                    val routing = RoutingInfo.Builder()
+                        .setCurrentStep(step(next, lanes), distance(progress.distanceToManeuverM ?: 0.0))
+                    if (lanes != null) routing.setLanesImage(lanesIcon(next.turn, lanes))
                     progress.followingManeuver?.let { routing.setNextStep(step(it)) }
                     builder.setNavigationInfo(routing.build())
                 } else {
@@ -78,11 +83,50 @@ object CarTemplates {
         return builder.build()
     }
 
-    fun step(maneuver: RouteManeuver): Step =
-        Step.Builder(maneuver.instruction)
+    /** `lanes`: one flag per lane from 1차로; the host then also needs `RoutingInfo.setLanesImage`. */
+    fun step(maneuver: RouteManeuver, lanes: List<Boolean>? = null): Step {
+        val builder = Step.Builder(maneuver.instruction)
             .setManeuver(Maneuver.Builder(maneuverType(maneuver.turn)).setIcon(icon(maneuver.turn)).build())
             .setRoad(maneuver.roadName)
-            .build()
+        lanes?.forEach { recommended ->
+            val shape = if (recommended) laneShape(maneuver.turn) else LaneDirection.SHAPE_STRAIGHT
+            builder.addLane(Lane.Builder().addDirection(LaneDirection.create(shape, recommended)).build())
+        }
+        return builder.build()
+    }
+
+    private fun laneShape(turn: Turn): Int = when (turn) {
+        Turn.SLIGHT_LEFT, Turn.RAMP_LEFT, Turn.EXIT_LEFT, Turn.FORK_LEFT -> LaneDirection.SHAPE_SLIGHT_LEFT
+        Turn.LEFT -> LaneDirection.SHAPE_NORMAL_LEFT
+        Turn.SHARP_LEFT -> LaneDirection.SHAPE_SHARP_LEFT
+        Turn.UTURN -> LaneDirection.SHAPE_U_TURN_LEFT
+        Turn.SLIGHT_RIGHT, Turn.RAMP_RIGHT, Turn.EXIT_RIGHT, Turn.FORK_RIGHT -> LaneDirection.SHAPE_SLIGHT_RIGHT
+        Turn.RIGHT -> LaneDirection.SHAPE_NORMAL_RIGHT
+        Turn.SHARP_RIGHT -> LaneDirection.SHAPE_SHARP_RIGHT
+        else -> LaneDirection.SHAPE_STRAIGHT
+    }
+
+    /** Placeholder lane strip: one box per lane, the lanes to use filled with the turn arrow. */
+    private fun lanesIcon(turn: Turn, lanes: List<Boolean>): CarIcon {
+        val cell = 96
+        val bitmap = Bitmap.createBitmap(cell * lanes.size, cell, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val frame = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = 4f
+        }
+        val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(90, 255, 255, 255) }
+        val arrowBitmap = arrow(turn, cell)
+        val dim = Paint().apply { alpha = 70 }
+        lanes.forEachIndexed { i, recommended ->
+            val left = (i * cell).toFloat()
+            canvas.drawRect(left + 4, 4f, left + cell - 4, cell - 4f, frame)
+            if (recommended) canvas.drawRect(left + 6, 6f, left + cell - 6, cell - 6f, fill)
+            canvas.drawBitmap(if (recommended) arrowBitmap else arrow(Turn.STRAIGHT, cell), left, 0f, if (recommended) null else dim)
+        }
+        return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
+    }
 
     fun distance(meters: Double): Distance = when {
         meters >= 10_000 -> Distance.create(meters / 1_000, Distance.UNIT_KILOMETERS)

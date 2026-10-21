@@ -26,9 +26,10 @@ Predictive Multi-Route Navigation. 수백 개의 후보 경로를 탐색하는 �
 | MIXNAVUTS Traffic | 실시간·미래 교통 상황 예측 | `mixnavuts/traffic.py`, `live.py`, `korea/its.py`, `korea/archive.py` |
 | MIXNAVUTS Distribution | 다수 차량의 경로 분배 최적화 | 미구현 |
 | MIXNAVUTS Personal | 운전자 선호와 주행 목적 분석 | `mixnavuts/ranking.py` (주행 목적별 비용만) |
-| MIXNAVUTS Navigation | 위치 추적·차선 안내·재탐색 | `mixnavuts/guidance.py` + 앱 코어의 `RouteTracker`·`NavigationSession` (차선 안내 없음) |
+| MIXNAVUTS Navigation | 위치 추적·차선 안내·재탐색 | `mixnavuts/guidance.py`, `roadinfo.py`, `korea/hdmap.py`(정밀도로지도 차로) + 앱 코어의 `RouteTracker`·`NavigationSession` |
 | MIXNAVUTS Connect | Android Auto·CarPlay 연동 | `android/app/.../car`, `ios/Mixnavuts/CarPlay` |
-| MIXNAVUTS HUD | 속도·도로 형상·분기점·ETA 표시 | 앱 코어의 `HudState` (값과 문구). 화면 디자인은 미정 |
+| MIXNAVUTS HUD | 속도·도로 형상·분기점·ETA 표시 | 앱 코어의 `HudState` (속도, 차로, 단속카메라·과속방지턱 경고, 페이스노트). 화면 디자인은 미정 |
+| 자체 지도 | 지도 타일·검색 | `mixnavuts/tiles.py`, `mapstyle.py`, `korea/vworld.py`, `korea/juso.py` + 앱의 MapLibre |
 
 제품은 두 가지로 나눌 수 있다.
 

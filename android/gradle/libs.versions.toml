@@ -1,14 +1,14 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.1.0"
-coroutines = "1.9.0"
-serialization = "1.7.3"
+kotlin = "2.2.10"
+coroutines = "1.10.2"
+serialization = "1.9.0"
 compose-bom = "2024.12.01"
 activity-compose = "1.9.3"
 lifecycle = "2.8.7"
 core-ktx = "1.15.0"
 car-app = "1.4.0"
-naver-map = "3.18.0"
+maplibre = "13.6.1"
 junit = "4.13.2"
 
 [libraries]
@@ -27,7 +27,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 car-app = { module = "androidx.car.app:app", version.ref = "car-app" }
 car-app-projected = { module = "androidx.car.app:app-projected", version.ref = "car-app" }
-naver-map = { module = "com.naver.maps:map-sdk", version.ref = "naver-map" }
+maplibre = { module = "org.maplibre.gl:android-sdk", version.ref = "maplibre" }
 junit = { module = "junit:junit", version.ref = "junit" }
 
 [plugins]

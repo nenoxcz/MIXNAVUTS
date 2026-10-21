@@ -2,8 +2,8 @@ package com.mixnavuts.app
 
 import android.app.Application
 import android.content.Context
-import com.mixnavuts.app.ui.map.NaverMapSetup
 import com.mixnavuts.core.MixnavutsApi
+import org.maplibre.android.MapLibre
 
 class MixnavutsApplication : Application() {
     lateinit var controller: NavigationController
@@ -12,7 +12,7 @@ class MixnavutsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         controller = NavigationController(this, MixnavutsApi(BuildConfig.MIXNAVUTS_API))
-        NaverMapSetup.init(this, BuildConfig.NAVER_MAP_CLIENT_ID)
+        MapLibre.getInstance(this)
     }
 }
 

@@ -23,6 +23,8 @@ struct GuidanceView: View {
                         Text(hud.maneuverText ?? "").font(.title3)
                     }
                     if let then = hud.thenText { Text(then) }
+                    if let lanes = hud.lanes { Text("차로  " + lanes.map { $0 ? "▣" : "▢" }.joined(separator: " ")) }
+                    if let alert = hud.alert { Text(alert) }
                     if let ahead = hud.roadAhead { Text("ROAD AHEAD  \(ahead)") }
                     HStack(spacing: 16) {
                         Text("\(hud.speedKmh.map { "\($0)" } ?? "--") km/h")

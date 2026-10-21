@@ -5,10 +5,6 @@ import SwiftUI
 struct MixnavutsApp: App {
     @StateObject private var controller = NavigationController.shared
 
-    init() {
-        NaverMapSetup.configure(clientId: AppConfig.naverMapClientId)
-    }
-
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -25,7 +21,9 @@ enum AppConfig {
         return URL(string: text ?? "") ?? URL(string: "http://localhost:8080")!
     }
 
-    static var naverMapClientId: String {
-        (Bundle.main.object(forInfoDictionaryKey: "NaverMapClientID") as? String) ?? ""
+    /// MapLibre style; by default the engine's own map at {api}/v1/style.json. Empty: use Apple MapKit.
+    static var mapStyleURL: URL? {
+        guard let text = Bundle.main.object(forInfoDictionaryKey: "MixnavutsMapStyleURL") as? String, !text.isEmpty else { return nil }
+        return URL(string: text)
     }
 }

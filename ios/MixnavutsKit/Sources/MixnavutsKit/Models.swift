@@ -133,15 +133,65 @@ public struct RouteOption: Codable, Identifiable, Sendable {
     public var segments: [Segment]
     public var maneuvers: [Maneuver]
     public var curves: [Curve]
+    /// Cameras, traffic lights and speed bumps along the route, in driving order.
+    public var alerts: [RouteAlert]
 
     public var points: [RoutePoint] { geometry.map { RoutePoint(lat: $0[0], lon: $0[1], distanceM: $0[2]) } }
 
     enum CodingKeys: String, CodingKey {
-        case id, labels, depart, arrival, winding, summary, geometry, segments, maneuvers, curves
+        case id, labels, depart, arrival, winding, summary, geometry, segments, maneuvers, curves, alerts
         case durationS = "duration_s"
         case distanceM = "distance_m"
         case tollKrw = "toll_krw"
         case highwayShare = "highway_share"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        labels = try c.decode([String].self, forKey: .labels)
+        depart = try c.decode(Double.self, forKey: .depart)
+        arrival = try c.decode(Double.self, forKey: .arrival)
+        durationS = try c.decode(Double.self, forKey: .durationS)
+        distanceM = try c.decode(Double.self, forKey: .distanceM)
+        tollKrw = try c.decode(Int.self, forKey: .tollKrw)
+        highwayShare = try c.decode(Double.self, forKey: .highwayShare)
+        winding = try c.decode(Double.self, forKey: .winding)
+        summary = try c.decode(String.self, forKey: .summary)
+        geometry = try c.decode([[Double]].self, forKey: .geometry)
+        segments = try c.decode([Segment].self, forKey: .segments)
+        maneuvers = try c.decode([Maneuver].self, forKey: .maneuvers)
+        curves = try c.decodeIfPresent([Curve].self, forKey: .curves) ?? []
+        alerts = try c.decodeIfPresent([RouteAlert].self, forKey: .alerts) ?? []
+    }
+}
+
+/// `recommended` counts from 1 = 1차로 (leftmost).
+public struct LaneHint: Codable, Hashable, Sendable {
+    public var count: Int
+    public var recommended: [Int]
+}
+
+public struct RouteAlert: Codable, Hashable, Sendable {
+    /// speed_camera, signal_camera, section_camera, traffic_light, speed_bump
+    public var type: String
+    public var distanceM: Double
+    public var speedLimitKmh: Int?
+    public var label: String
+    public var note: String?
+
+    public init(type: String, distanceM: Double, speedLimitKmh: Int? = nil, label: String, note: String? = nil) {
+        self.type = type
+        self.distanceM = distanceM
+        self.speedLimitKmh = speedLimitKmh
+        self.label = label
+        self.note = note
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type, label, note
+        case distanceM = "distance_m"
+        case speedLimitKmh = "speed_limit_kmh"
     }
 }
 
@@ -180,11 +230,13 @@ public struct Maneuver: Codable, Hashable, Sendable {
     public var modifier: String
     public var roadName: String
     public var instruction: String
+    /// Which lanes to be in (from 정밀도로지도, or the usual lanes for the maneuver).
+    public var lanes: LaneHint?
 
     public var turn: Turn { Turn.of(type: type, modifier: modifier) }
 
     enum CodingKeys: String, CodingKey {
-        case type, modifier, instruction
+        case type, modifier, instruction, lanes
         case pointIndex = "point_index"
         case distanceM = "distance_m"
         case roadName = "road_name"

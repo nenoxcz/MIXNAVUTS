@@ -158,6 +158,64 @@ class HudTest {
     }
 }
 
+class LaneAndAlertTest {
+    @Test
+    fun fixtureCarriesLanesAndAlerts() {
+        val route = motorwayRoute()
+        assertTrue(route.maneuvers.any { it.lanes != null })
+        assertTrue(route.alerts.any { it.type == "speed_camera" && it.speedLimitKmh == 100 })
+        assertEquals(route.alerts.sortedBy { it.distanceM }, route.alerts)
+    }
+
+    @Test
+    fun hudShowsLanesNearTheManeuverOnly() {
+        val route = motorwayRoute()
+        val guided = route.maneuvers.first { it.lanes != null }
+        val tracker = RouteTracker(route)
+        val sim = RouteSimulator(route, startEpoch = route.depart)
+        var shownNear = false
+        var shownFar = false
+        var t = 0.0
+        while (t < route.durationS) {
+            val fix = sim.fixAt(t)
+            val progress = tracker.update(fix)
+            val hud = Hud.build(progress, fix, null, KST)
+            if (progress.nextManeuver == guided && hud.lanes != null) {
+                if (progress.distanceToManeuverM!! <= Hud.LANES_WITHIN_M) shownNear = true else shownFar = true
+                assertEquals(guided.lanes!!.count, hud.lanes!!.size)
+                assertEquals(guided.lanes!!.recommended, hud.lanes!!.withIndex().filter { it.value }.map { it.index + 1 })
+            }
+            t += 3.0
+        }
+        assertTrue(shownNear)
+        assertTrue(!shownFar)
+    }
+
+    @Test
+    fun cameraAlertAppearsInRange() {
+        val route = motorwayRoute()
+        val camera = route.alerts.first { it.type == "speed_camera" }
+        val tracker = RouteTracker(route)
+        val sim = RouteSimulator(route, startEpoch = route.depart)
+        val texts = mutableListOf<String>()
+        var t = 0.0
+        while (t < route.durationS) {
+            val fix = sim.fixAt(t)
+            val progress = tracker.update(fix)
+            val hud = Hud.build(progress, fix, null, KST)
+            if (progress.nextAlert == camera) {
+                val distance = progress.distanceToAlertM!!
+                if (distance > 800) assertNull(hud.alert) else hud.alert?.let { texts += it }
+            }
+            t += 2.0
+        }
+        assertTrue(texts.isNotEmpty())
+        assertTrue(texts.all { it.startsWith("과속 단속 100") })
+        assertEquals("과속방지턱 · 150 m 앞", Format.alert(RouteAlert("speed_bump", 0.0, label = "과속방지턱"), 150.0))
+        assertNull(Format.alert(RouteAlert("speed_bump", 0.0, label = "과속방지턱"), 400.0))
+    }
+}
+
 class SessionTest {
     private class FakeApi(val reply: RouteOption) : RoutesApi {
         val requests = mutableListOf<RouteRequest>()

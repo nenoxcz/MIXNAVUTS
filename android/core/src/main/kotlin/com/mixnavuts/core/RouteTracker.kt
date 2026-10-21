@@ -26,6 +26,9 @@ data class Progress(
     val followingManeuver: Maneuver?,
     val nextCurve: Curve?,
     val distanceToCurveM: Double?,
+    /** Next camera or speed bump ahead (traffic lights are left to the map). */
+    val nextAlert: RouteAlert?,
+    val distanceToAlertM: Double?,
     val snappedLat: Double,
     val snappedLon: Double,
 )
@@ -111,6 +114,7 @@ class RouteTracker(
         val upcoming = route.maneuvers.filter { it.type != "depart" && it.distanceM > along + 1.0 }
         val next = upcoming.firstOrNull()
         val curve = route.curves.firstOrNull { it.endM > along }
+        val alert = route.alerts.firstOrNull { it.type != "traffic_light" && it.distanceM > along - 5.0 }
 
         val p0 = points[piece.coerceIn(0, points.size - 2)]
         val p1 = points[(piece + 1).coerceIn(1, points.size - 1)]
@@ -130,6 +134,8 @@ class RouteTracker(
             followingManeuver = upcoming.getOrNull(1),
             nextCurve = curve,
             distanceToCurveM = curve?.let { (it.startM - along).coerceAtLeast(0.0) },
+            nextAlert = alert,
+            distanceToAlertM = alert?.let { (it.distanceM - along).coerceAtLeast(0.0) },
             snappedLat = p0.lat + t * (p1.lat - p0.lat),
             snappedLon = p0.lon + t * (p1.lon - p0.lon),
         )

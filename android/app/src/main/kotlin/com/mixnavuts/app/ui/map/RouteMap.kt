@@ -9,12 +9,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import com.mixnavuts.app.BuildConfig
 import com.mixnavuts.core.RouteOption
 import com.mixnavuts.core.ScreenFit
 
 /**
- * The route on a map: 네이버 지도 when a client ID is configured, otherwise a
- * plain drawing of the route (enough for development and the synthetic city).
+ * The route on the engine's own map (MapLibre + /v1/style.json). With an empty
+ * `mixnavuts.mapStyle` setting it falls back to a plain drawing of the route.
  */
 @Composable
 fun RouteMap(
@@ -24,8 +25,8 @@ fun RouteMap(
     modifier: Modifier = Modifier,
     bearing: Float? = null,
 ) {
-    if (NaverMapSetup.enabled) {
-        NaverRouteMap(route, position, bearing, follow, modifier)
+    if (BuildConfig.MAP_STYLE_URL.isNotBlank()) {
+        MapLibreRouteMap(BuildConfig.MAP_STYLE_URL, route, position, bearing, follow, modifier)
     } else {
         RouteDrawing(route, position, modifier)
     }
