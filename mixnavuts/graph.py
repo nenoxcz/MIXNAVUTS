@@ -35,6 +35,7 @@ class Edge:
     toll_krw: int = 0
     curvature: float = 0.0  # 0 = straight, 1 = very winding
     name: str = ""
+    ext_id: str = ""  # id in the source data, e.g. 표준링크ID
 
     @property
     def speed_limit_mps(self) -> float:
@@ -52,6 +53,7 @@ class RoadGraph:
         self._out: dict[int, list[Edge]] = {}
         self._in: dict[int, list[Edge]] = {}
         self._by_name: dict[str, int] = {}
+        self._by_ext: dict[str, Edge] = {}
 
     def add_node(self, x: float, y: float, name: str = "") -> int:
         node_id = len(self.nodes)
@@ -73,6 +75,7 @@ class RoadGraph:
         toll_krw: int = 0,
         curvature: float = 0.0,
         name: str = "",
+        ext_id: str = "",
     ) -> Edge:
         if length_m is None:
             length_m = self.euclidean_m(source, target)
@@ -86,8 +89,11 @@ class RoadGraph:
             toll_krw=toll_krw,
             curvature=curvature,
             name=name,
+            ext_id=ext_id,
         )
         self.edges.append(edge)
+        if ext_id:
+            self._by_ext[ext_id] = edge
         self._out[source].append(edge)
         self._in[target].append(edge)
         return edge
@@ -122,6 +128,9 @@ class RoadGraph:
         if node_id not in self.nodes:
             raise KeyError(f"unknown node id: {node_id}")
         return node_id
+
+    def edge_by_ext(self, ext_id: str) -> Edge | None:
+        return self._by_ext.get(ext_id)
 
     def places(self) -> dict[str, int]:
         return dict(self._by_name)

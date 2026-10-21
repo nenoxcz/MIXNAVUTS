@@ -6,6 +6,9 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+korea = ["pyshp>=2.3"]
+
 [project.scripts]
 mixnavuts = "mixnavuts.cli:main"
 
@@ -14,7 +17,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["mixnavuts"]
+packages = ["mixnavuts", "mixnavuts.korea"]
 
 [tool.ruff]
 line-length = 130

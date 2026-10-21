@@ -1,0 +1,1728 @@
+{
+ "synthetic": true,
+ "network": "synthetic",
+ "mode": "balanced",
+ "depart": 1792537800.0,
+ "candidates": 224,
+ "candidate_sources": {
+  "via": 214,
+  "penalty": 10,
+  "fastest": 1,
+  "highway": 1,
+  "main_roads": 1,
+  "no_highway": 1,
+  "shortest": 1,
+  "toll_free": 1,
+  "winding": 1
+ },
+ "live": {
+  "source": "synthetic",
+  "as_of": 1792537800.0,
+  "incidents": 1
+ },
+ "routes": [
+  {
+   "id": "a2b5df823848",
+   "labels": [
+    "추천",
+    "무료도로"
+   ],
+   "depart": 1792537800.0,
+   "arrival": 1792539615.4224408,
+   "duration_s": 1815.4,
+   "distance_m": 25232.6,
+   "toll_krw": 0,
+   "highway_share": 0.0,
+   "winding": 0.0,
+   "summary": "남북대로 0 → 국도 7호선",
+   "geometry": [
+    [
+     37.281838,
+     126.05,
+     0.0
+    ],
+    [
+     37.288133,
+     126.05,
+     734.3
+    ],
+    [
+     37.294429,
+     126.05,
+     1458.7
+    ],
+    [
+     37.300724,
+     126.05,
+     2174.3
+    ],
+    [
+     37.307019,
+     126.05,
+     2877.0
+    ],
+    [
+     37.313314,
+     126.05,
+     3585.6
+    ],
+    [
+     37.313314,
+     126.057903,
+     4314.2
+    ],
+    [
+     37.313314,
+     126.065807,
+     5051.3
+    ],
+    [
+     37.313314,
+     126.07371,
+     5754.9
+    ],
+    [
+     37.313314,
+     126.081613,
+     6482.7
+    ],
+    [
+     37.313314,
+     126.089517,
+     7182.8
+    ],
+    [
+     37.313314,
+     126.09742,
+     7917.8
+    ],
+    [
+     37.313314,
+     126.105323,
+     8619.9
+    ],
+    [
+     37.313314,
+     126.113227,
+     9334.9
+    ],
+    [
+     37.313314,
+     126.12113,
+     10068.4
+    ],
+    [
+     37.313314,
+     126.129033,
+     10774.0
+    ],
+    [
+     37.313314,
+     126.136937,
+     11486.0
+    ],
+    [
+     37.313314,
+     126.14484,
+     12215.8
+    ],
+    [
+     37.313314,
+     126.152743,
+     12943.8
+    ],
+    [
+     37.313314,
+     126.160647,
+     13652.5
+    ],
+    [
+     37.313314,
+     126.16855,
+     14385.4
+    ],
+    [
+     37.313314,
+     126.176453,
+     15109.9
+    ],
+    [
+     37.313314,
+     126.184357,
+     15829.2
+    ],
+    [
+     37.313314,
+     126.19226,
+     16553.7
+    ],
+    [
+     37.313314,
+     126.200163,
+     17274.9
+    ],
+    [
+     37.313314,
+     126.208067,
+     17999.5
+    ],
+    [
+     37.313314,
+     126.21597,
+     18709.2
+    ],
+    [
+     37.313314,
+     126.223873,
+     19440.2
+    ],
+    [
+     37.313314,
+     126.231777,
+     20160.8
+    ],
+    [
+     37.313314,
+     126.23968,
+     20896.2
+    ],
+    [
+     37.313314,
+     126.247583,
+     21622.7
+    ],
+    [
+     37.313314,
+     126.255487,
+     22355.3
+    ],
+    [
+     37.313314,
+     126.26339,
+     23062.3
+    ],
+    [
+     37.307019,
+     126.26339,
+     23789.1
+    ],
+    [
+     37.300724,
+     126.26339,
+     24492.3
+    ],
+    [
+     37.294429,
+     126.26339,
+     25232.6
+    ]
+   ],
+   "segments": [
+    {
+     "start_index": 0,
+     "end_index": 1,
+     "length_m": 734.3,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 0.0,
+     "duration_s": 44.0,
+     "link_id": null
+    },
+    {
+     "start_index": 1,
+     "end_index": 2,
+     "length_m": 724.4,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 44.0,
+     "duration_s": 54.1,
+     "link_id": null
+    },
+    {
+     "start_index": 2,
+     "end_index": 3,
+     "length_m": 715.6,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 98.2,
+     "duration_s": 76.8,
+     "link_id": null
+    },
+    {
+     "start_index": 3,
+     "end_index": 4,
+     "length_m": 702.6,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 175.0,
+     "duration_s": 38.1,
+     "link_id": null
+    },
+    {
+     "start_index": 4,
+     "end_index": 5,
+     "length_m": 708.7,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 213.1,
+     "duration_s": 52.6,
+     "link_id": null
+    },
+    {
+     "start_index": 5,
+     "end_index": 6,
+     "length_m": 728.6,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 265.7,
+     "duration_s": 60.1,
+     "link_id": null
+    },
+    {
+     "start_index": 6,
+     "end_index": 7,
+     "length_m": 737.1,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 325.8,
+     "duration_s": 62.6,
+     "link_id": null
+    },
+    {
+     "start_index": 7,
+     "end_index": 8,
+     "length_m": 703.6,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 388.4,
+     "duration_s": 49.4,
+     "link_id": null
+    },
+    {
+     "start_index": 8,
+     "end_index": 9,
+     "length_m": 727.7,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 437.8,
+     "duration_s": 51.2,
+     "link_id": null
+    },
+    {
+     "start_index": 9,
+     "end_index": 10,
+     "length_m": 700.2,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 489.0,
+     "duration_s": 65.8,
+     "link_id": null
+    },
+    {
+     "start_index": 10,
+     "end_index": 11,
+     "length_m": 735.0,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 554.8,
+     "duration_s": 51.2,
+     "link_id": null
+    },
+    {
+     "start_index": 11,
+     "end_index": 12,
+     "length_m": 702.1,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 605.9,
+     "duration_s": 58.3,
+     "link_id": null
+    },
+    {
+     "start_index": 12,
+     "end_index": 13,
+     "length_m": 715.0,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 664.2,
+     "duration_s": 52.1,
+     "link_id": null
+    },
+    {
+     "start_index": 13,
+     "end_index": 14,
+     "length_m": 733.5,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 716.3,
+     "duration_s": 53.0,
+     "link_id": null
+    },
+    {
+     "start_index": 14,
+     "end_index": 15,
+     "length_m": 705.6,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 769.4,
+     "duration_s": 55.7,
+     "link_id": null
+    },
+    {
+     "start_index": 15,
+     "end_index": 16,
+     "length_m": 712.0,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 825.1,
+     "duration_s": 59.2,
+     "link_id": null
+    },
+    {
+     "start_index": 16,
+     "end_index": 17,
+     "length_m": 729.8,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 884.3,
+     "duration_s": 52.7,
+     "link_id": null
+    },
+    {
+     "start_index": 17,
+     "end_index": 18,
+     "length_m": 728.0,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 937.0,
+     "duration_s": 48.9,
+     "link_id": null
+    },
+    {
+     "start_index": 18,
+     "end_index": 19,
+     "length_m": 708.7,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 985.9,
+     "duration_s": 38.8,
+     "link_id": null
+    },
+    {
+     "start_index": 19,
+     "end_index": 20,
+     "length_m": 732.9,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1024.7,
+     "duration_s": 45.3,
+     "link_id": null
+    },
+    {
+     "start_index": 20,
+     "end_index": 21,
+     "length_m": 724.5,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1070.0,
+     "duration_s": 48.6,
+     "link_id": null
+    },
+    {
+     "start_index": 21,
+     "end_index": 22,
+     "length_m": 719.4,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1118.5,
+     "duration_s": 47.8,
+     "link_id": null
+    },
+    {
+     "start_index": 22,
+     "end_index": 23,
+     "length_m": 724.5,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1166.3,
+     "duration_s": 44.5,
+     "link_id": null
+    },
+    {
+     "start_index": 23,
+     "end_index": 24,
+     "length_m": 721.3,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1210.8,
+     "duration_s": 40.6,
+     "link_id": null
+    },
+    {
+     "start_index": 24,
+     "end_index": 25,
+     "length_m": 724.5,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1251.4,
+     "duration_s": 45.6,
+     "link_id": null
+    },
+    {
+     "start_index": 25,
+     "end_index": 26,
+     "length_m": 709.8,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1297.0,
+     "duration_s": 36.5,
+     "link_id": null
+    },
+    {
+     "start_index": 26,
+     "end_index": 27,
+     "length_m": 730.9,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1333.5,
+     "duration_s": 41.5,
+     "link_id": null
+    },
+    {
+     "start_index": 27,
+     "end_index": 28,
+     "length_m": 720.6,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1375.0,
+     "duration_s": 46.5,
+     "link_id": null
+    },
+    {
+     "start_index": 28,
+     "end_index": 29,
+     "length_m": 735.4,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1421.5,
+     "duration_s": 50.6,
+     "link_id": null
+    },
+    {
+     "start_index": 29,
+     "end_index": 30,
+     "length_m": 726.4,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1472.0,
+     "duration_s": 46.7,
+     "link_id": null
+    },
+    {
+     "start_index": 30,
+     "end_index": 31,
+     "length_m": 732.6,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1518.7,
+     "duration_s": 40.6,
+     "link_id": null
+    },
+    {
+     "start_index": 31,
+     "end_index": 32,
+     "length_m": 707.1,
+     "speed_limit_kmh": 70,
+     "road_name": "국도 7호선",
+     "road_class": "trunk",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1559.4,
+     "duration_s": 44.0,
+     "link_id": null
+    },
+    {
+     "start_index": 32,
+     "end_index": 33,
+     "length_m": 726.8,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1603.4,
+     "duration_s": 71.6,
+     "link_id": null
+    },
+    {
+     "start_index": 33,
+     "end_index": 34,
+     "length_m": 703.2,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1675.0,
+     "duration_s": 68.1,
+     "link_id": null
+    },
+    {
+     "start_index": 34,
+     "end_index": 35,
+     "length_m": 740.3,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1743.1,
+     "duration_s": 72.3,
+     "link_id": null
+    }
+   ],
+   "maneuvers": [
+    {
+     "point_index": 0,
+     "distance_m": 0.0,
+     "type": "depart",
+     "modifier": "straight",
+     "road_name": "남북대로 0",
+     "instruction": "남북대로 0 방면으로 출발"
+    },
+    {
+     "point_index": 5,
+     "distance_m": 3585.6,
+     "type": "turn",
+     "modifier": "right",
+     "road_name": "국도 7호선",
+     "instruction": "우회전 후 국도 7호선"
+    },
+    {
+     "point_index": 32,
+     "distance_m": 23062.3,
+     "type": "turn",
+     "modifier": "right",
+     "road_name": "이면도로",
+     "instruction": "우회전 후 이면도로"
+    },
+    {
+     "point_index": 35,
+     "distance_m": 25232.6,
+     "type": "arrive",
+     "modifier": "straight",
+     "road_name": "이면도로",
+     "instruction": "목적지 도착"
+    }
+   ],
+   "curves": []
+  },
+  {
+   "id": "a1c3de8ddd0e",
+   "labels": [
+    "최단시간",
+    "고속도로"
+   ],
+   "depart": 1792537800.0,
+   "arrival": 1792539434.5740292,
+   "duration_s": 1634.6,
+   "distance_m": 22104.2,
+   "toll_krw": 1860,
+   "highway_share": 0.836,
+   "winding": 0.0,
+   "summary": "중앙고속도로 → 동서대로 14",
+   "geometry": [
+    [
+     37.281838,
+     126.05,
+     0.0
+    ],
+    [
+     37.288133,
+     126.05,
+     734.3
+    ],
+    [
+     37.284986,
+     126.053952,
+     1579.3
+    ],
+    [
+     37.284986,
+     126.069758,
+     2979.3
+    ],
+    [
+     37.284986,
+     126.085565,
+     4379.3
+    ],
+    [
+     37.284986,
+     126.101372,
+     5779.3
+    ],
+    [
+     37.284986,
+     126.117178,
+     7179.3
+    ],
+    [
+     37.284986,
+     126.132985,
+     8579.3
+    ],
+    [
+     37.284986,
+     126.148792,
+     9979.3
+    ],
+    [
+     37.284986,
+     126.164598,
+     11379.3
+    ],
+    [
+     37.284986,
+     126.180405,
+     12779.3
+    ],
+    [
+     37.284986,
+     126.196212,
+     14179.3
+    ],
+    [
+     37.284986,
+     126.212018,
+     15579.3
+    ],
+    [
+     37.284986,
+     126.227825,
+     16979.3
+    ],
+    [
+     37.284986,
+     126.243632,
+     18379.3
+    ],
+    [
+     37.288133,
+     126.23968,
+     19224.2
+    ],
+    [
+     37.288133,
+     126.247583,
+     19951.2
+    ],
+    [
+     37.288133,
+     126.255487,
+     20682.3
+    ],
+    [
+     37.288133,
+     126.26339,
+     21386.6
+    ],
+    [
+     37.294429,
+     126.26339,
+     22104.2
+    ]
+   ],
+   "segments": [
+    {
+     "start_index": 0,
+     "end_index": 1,
+     "length_m": 734.3,
+     "speed_limit_kmh": 60,
+     "road_name": "남북대로 0",
+     "road_class": "primary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 0.0,
+     "duration_s": 44.0,
+     "link_id": null
+    },
+    {
+     "start_index": 1,
+     "end_index": 2,
+     "length_m": 845.0,
+     "speed_limit_kmh": 50,
+     "road_name": "중앙고속도로 IC",
+     "road_class": "ramp",
+     "curvature": 0.0,
+     "toll_krw": 900,
+     "offset_s": 44.0,
+     "duration_s": 106.6,
+     "link_id": null
+    },
+    {
+     "start_index": 2,
+     "end_index": 3,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 150.7,
+     "duration_s": 144.3,
+     "link_id": null
+    },
+    {
+     "start_index": 3,
+     "end_index": 4,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 295.0,
+     "duration_s": 119.9,
+     "link_id": null
+    },
+    {
+     "start_index": 4,
+     "end_index": 5,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 414.9,
+     "duration_s": 127.2,
+     "link_id": null
+    },
+    {
+     "start_index": 5,
+     "end_index": 6,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 542.1,
+     "duration_s": 135.2,
+     "link_id": null
+    },
+    {
+     "start_index": 6,
+     "end_index": 7,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 677.3,
+     "duration_s": 109.4,
+     "link_id": null
+    },
+    {
+     "start_index": 7,
+     "end_index": 8,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 786.7,
+     "duration_s": 140.4,
+     "link_id": null
+    },
+    {
+     "start_index": 8,
+     "end_index": 9,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 927.1,
+     "duration_s": 54.4,
+     "link_id": null
+    },
+    {
+     "start_index": 9,
+     "end_index": 10,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 981.4,
+     "duration_s": 50.1,
+     "link_id": null
+    },
+    {
+     "start_index": 10,
+     "end_index": 11,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 1031.6,
+     "duration_s": 63.3,
+     "link_id": null
+    },
+    {
+     "start_index": 11,
+     "end_index": 12,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 1094.8,
+     "duration_s": 71.9,
+     "link_id": null
+    },
+    {
+     "start_index": 12,
+     "end_index": 13,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 1166.7,
+     "duration_s": 68.9,
+     "link_id": null
+    },
+    {
+     "start_index": 13,
+     "end_index": 14,
+     "length_m": 1400.0,
+     "speed_limit_kmh": 100,
+     "road_name": "중앙고속도로",
+     "road_class": "motorway",
+     "curvature": 0.0,
+     "toll_krw": 80,
+     "offset_s": 1235.6,
+     "duration_s": 54.0,
+     "link_id": null
+    },
+    {
+     "start_index": 14,
+     "end_index": 15,
+     "length_m": 845.0,
+     "speed_limit_kmh": 50,
+     "road_name": "중앙고속도로 IC",
+     "road_class": "ramp",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1289.6,
+     "duration_s": 93.7,
+     "link_id": null
+    },
+    {
+     "start_index": 15,
+     "end_index": 16,
+     "length_m": 726.9,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1383.3,
+     "duration_s": 61.5,
+     "link_id": null
+    },
+    {
+     "start_index": 16,
+     "end_index": 17,
+     "length_m": 731.1,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1444.8,
+     "duration_s": 62.1,
+     "link_id": null
+    },
+    {
+     "start_index": 17,
+     "end_index": 18,
+     "length_m": 704.3,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1506.9,
+     "duration_s": 59.5,
+     "link_id": null
+    },
+    {
+     "start_index": 18,
+     "end_index": 19,
+     "length_m": 717.6,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1566.4,
+     "duration_s": 68.2,
+     "link_id": null
+    }
+   ],
+   "maneuvers": [
+    {
+     "point_index": 0,
+     "distance_m": 0.0,
+     "type": "depart",
+     "modifier": "straight",
+     "road_name": "남북대로 0",
+     "instruction": "남북대로 0 방면으로 출발"
+    },
+    {
+     "point_index": 1,
+     "distance_m": 734.3,
+     "type": "ramp_on",
+     "modifier": "right",
+     "road_name": "중앙고속도로 IC",
+     "instruction": "오른쪽 중앙고속도로 진입로"
+    },
+    {
+     "point_index": 14,
+     "distance_m": 18379.3,
+     "type": "ramp_off",
+     "modifier": "left",
+     "road_name": "중앙고속도로 IC",
+     "instruction": "왼쪽 진출로 (중앙고속도로 IC)"
+    },
+    {
+     "point_index": 15,
+     "distance_m": 19224.2,
+     "type": "turn",
+     "modifier": "right",
+     "road_name": "동서대로 14",
+     "instruction": "우회전 후 동서대로 14"
+    },
+    {
+     "point_index": 18,
+     "distance_m": 21386.6,
+     "type": "turn",
+     "modifier": "left",
+     "road_name": "이면도로",
+     "instruction": "좌회전 후 이면도로"
+    },
+    {
+     "point_index": 19,
+     "distance_m": 22104.2,
+     "type": "arrive",
+     "modifier": "straight",
+     "road_name": "이면도로",
+     "instruction": "목적지 도착"
+    }
+   ],
+   "curves": []
+  },
+  {
+   "id": "0cffa2cafebb",
+   "labels": [
+    "최단거리",
+    "무료도로"
+   ],
+   "depart": 1792537800.0,
+   "arrival": 1792539896.2363257,
+   "duration_s": 2096.2,
+   "distance_m": 20724.8,
+   "toll_krw": 0,
+   "highway_share": 0.0,
+   "winding": 0.0,
+   "summary": "동서대로 14",
+   "geometry": [
+    [
+     37.281838,
+     126.05,
+     0.0
+    ],
+    [
+     37.281838,
+     126.057903,
+     713.0
+    ],
+    [
+     37.281838,
+     126.065807,
+     1417.9
+    ],
+    [
+     37.288133,
+     126.065807,
+     2124.1
+    ],
+    [
+     37.288133,
+     126.07371,
+     2834.7
+    ],
+    [
+     37.288133,
+     126.081613,
+     3543.3
+    ],
+    [
+     37.288133,
+     126.089517,
+     4261.0
+    ],
+    [
+     37.288133,
+     126.09742,
+     4967.0
+    ],
+    [
+     37.288133,
+     126.105323,
+     5690.2
+    ],
+    [
+     37.288133,
+     126.113227,
+     6408.9
+    ],
+    [
+     37.288133,
+     126.12113,
+     7113.3
+    ],
+    [
+     37.288133,
+     126.129033,
+     7824.6
+    ],
+    [
+     37.294429,
+     126.129033,
+     8547.7
+    ],
+    [
+     37.294429,
+     126.136937,
+     9277.9
+    ],
+    [
+     37.294429,
+     126.14484,
+     9996.6
+    ],
+    [
+     37.294429,
+     126.152743,
+     10709.5
+    ],
+    [
+     37.294429,
+     126.160647,
+     11409.7
+    ],
+    [
+     37.294429,
+     126.16855,
+     12144.2
+    ],
+    [
+     37.294429,
+     126.176453,
+     12882.6
+    ],
+    [
+     37.294429,
+     126.184357,
+     13582.9
+    ],
+    [
+     37.294429,
+     126.19226,
+     14287.8
+    ],
+    [
+     37.294429,
+     126.200163,
+     15022.1
+    ],
+    [
+     37.294429,
+     126.208067,
+     15723.0
+    ],
+    [
+     37.294429,
+     126.21597,
+     16454.3
+    ],
+    [
+     37.294429,
+     126.223873,
+     17160.3
+    ],
+    [
+     37.294429,
+     126.231777,
+     17860.3
+    ],
+    [
+     37.294429,
+     126.23968,
+     18579.7
+    ],
+    [
+     37.294429,
+     126.247583,
+     19292.9
+    ],
+    [
+     37.294429,
+     126.255487,
+     20015.0
+    ],
+    [
+     37.294429,
+     126.26339,
+     20724.8
+    ]
+   ],
+   "segments": [
+    {
+     "start_index": 0,
+     "end_index": 1,
+     "length_m": 713.0,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 0.0,
+     "duration_s": 66.2,
+     "link_id": null
+    },
+    {
+     "start_index": 1,
+     "end_index": 2,
+     "length_m": 704.9,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 66.2,
+     "duration_s": 61.9,
+     "link_id": null
+    },
+    {
+     "start_index": 2,
+     "end_index": 3,
+     "length_m": 706.2,
+     "speed_limit_kmh": 50,
+     "road_name": "남북대로 2",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 128.1,
+     "duration_s": 61.8,
+     "link_id": null
+    },
+    {
+     "start_index": 3,
+     "end_index": 4,
+     "length_m": 710.6,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 189.8,
+     "duration_s": 79.9,
+     "link_id": null
+    },
+    {
+     "start_index": 4,
+     "end_index": 5,
+     "length_m": 708.6,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 269.7,
+     "duration_s": 82.8,
+     "link_id": null
+    },
+    {
+     "start_index": 5,
+     "end_index": 6,
+     "length_m": 717.7,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 352.5,
+     "duration_s": 67.6,
+     "link_id": null
+    },
+    {
+     "start_index": 6,
+     "end_index": 7,
+     "length_m": 706.0,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 420.1,
+     "duration_s": 91.2,
+     "link_id": null
+    },
+    {
+     "start_index": 7,
+     "end_index": 8,
+     "length_m": 723.2,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 511.4,
+     "duration_s": 99.8,
+     "link_id": null
+    },
+    {
+     "start_index": 8,
+     "end_index": 9,
+     "length_m": 718.7,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 611.2,
+     "duration_s": 68.0,
+     "link_id": null
+    },
+    {
+     "start_index": 9,
+     "end_index": 10,
+     "length_m": 704.4,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 679.2,
+     "duration_s": 75.4,
+     "link_id": null
+    },
+    {
+     "start_index": 10,
+     "end_index": 11,
+     "length_m": 711.3,
+     "speed_limit_kmh": 50,
+     "road_name": "동서대로 14",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 754.6,
+     "duration_s": 91.9,
+     "link_id": null
+    },
+    {
+     "start_index": 11,
+     "end_index": 12,
+     "length_m": 723.1,
+     "speed_limit_kmh": 50,
+     "road_name": "남북대로 10",
+     "road_class": "secondary",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 846.4,
+     "duration_s": 62.2,
+     "link_id": null
+    },
+    {
+     "start_index": 12,
+     "end_index": 13,
+     "length_m": 730.2,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 908.7,
+     "duration_s": 65.8,
+     "link_id": null
+    },
+    {
+     "start_index": 13,
+     "end_index": 14,
+     "length_m": 718.7,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 974.5,
+     "duration_s": 75.0,
+     "link_id": null
+    },
+    {
+     "start_index": 14,
+     "end_index": 15,
+     "length_m": 712.9,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1049.5,
+     "duration_s": 77.6,
+     "link_id": null
+    },
+    {
+     "start_index": 15,
+     "end_index": 16,
+     "length_m": 700.1,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1127.2,
+     "duration_s": 67.1,
+     "link_id": null
+    },
+    {
+     "start_index": 16,
+     "end_index": 17,
+     "length_m": 734.6,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1194.3,
+     "duration_s": 74.1,
+     "link_id": null
+    },
+    {
+     "start_index": 17,
+     "end_index": 18,
+     "length_m": 738.4,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1268.4,
+     "duration_s": 71.2,
+     "link_id": null
+    },
+    {
+     "start_index": 18,
+     "end_index": 19,
+     "length_m": 700.2,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1339.6,
+     "duration_s": 67.6,
+     "link_id": null
+    },
+    {
+     "start_index": 19,
+     "end_index": 20,
+     "length_m": 704.9,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1407.2,
+     "duration_s": 67.6,
+     "link_id": null
+    },
+    {
+     "start_index": 20,
+     "end_index": 21,
+     "length_m": 734.3,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1474.7,
+     "duration_s": 66.7,
+     "link_id": null
+    },
+    {
+     "start_index": 21,
+     "end_index": 22,
+     "length_m": 700.9,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1541.5,
+     "duration_s": 66.7,
+     "link_id": null
+    },
+    {
+     "start_index": 22,
+     "end_index": 23,
+     "length_m": 731.3,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1608.2,
+     "duration_s": 69.5,
+     "link_id": null
+    },
+    {
+     "start_index": 23,
+     "end_index": 24,
+     "length_m": 706.0,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1677.7,
+     "duration_s": 64.4,
+     "link_id": null
+    },
+    {
+     "start_index": 24,
+     "end_index": 25,
+     "length_m": 700.1,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1742.1,
+     "duration_s": 80.2,
+     "link_id": null
+    },
+    {
+     "start_index": 25,
+     "end_index": 26,
+     "length_m": 719.4,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1822.3,
+     "duration_s": 68.6,
+     "link_id": null
+    },
+    {
+     "start_index": 26,
+     "end_index": 27,
+     "length_m": 713.1,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1890.9,
+     "duration_s": 68.0,
+     "link_id": null
+    },
+    {
+     "start_index": 27,
+     "end_index": 28,
+     "length_m": 722.1,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 1958.9,
+     "duration_s": 69.5,
+     "link_id": null
+    },
+    {
+     "start_index": 28,
+     "end_index": 29,
+     "length_m": 709.8,
+     "speed_limit_kmh": 40,
+     "road_name": "이면도로",
+     "road_class": "local",
+     "curvature": 0.0,
+     "toll_krw": 0,
+     "offset_s": 2028.4,
+     "duration_s": 67.8,
+     "link_id": null
+    }
+   ],
+   "maneuvers": [
+    {
+     "point_index": 0,
+     "distance_m": 0.0,
+     "type": "depart",
+     "modifier": "straight",
+     "road_name": "이면도로",
+     "instruction": "이면도로 방면으로 출발"
+    },
+    {
+     "point_index": 2,
+     "distance_m": 1417.9,
+     "type": "turn",
+     "modifier": "left",
+     "road_name": "남북대로 2",
+     "instruction": "좌회전 후 남북대로 2"
+    },
+    {
+     "point_index": 3,
+     "distance_m": 2124.1,
+     "type": "turn",
+     "modifier": "right",
+     "road_name": "동서대로 14",
+     "instruction": "우회전 후 동서대로 14"
+    },
+    {
+     "point_index": 11,
+     "distance_m": 7824.6,
+     "type": "turn",
+     "modifier": "left",
+     "road_name": "남북대로 10",
+     "instruction": "좌회전 후 남북대로 10"
+    },
+    {
+     "point_index": 12,
+     "distance_m": 8547.7,
+     "type": "turn",
+     "modifier": "right",
+     "road_name": "이면도로",
+     "instruction": "우회전 후 이면도로"
+    },
+    {
+     "point_index": 29,
+     "distance_m": 20724.8,
+     "type": "arrive",
+     "modifier": "straight",
+     "road_name": "이면도로",
+     "instruction": "목적지 도착"
+    }
+   ],
+   "curves": []
+  }
+ ]
+}

@@ -191,3 +191,29 @@ def observe(graph: RoadGraph, traffic: TrafficModel, t: float, edge_ids: Sequenc
     """Read speeds from a model, e.g. a ground-truth day, as a sensor would."""
     ids = range(len(graph.edges)) if edge_ids is None else edge_ids
     return {i: traffic.speed_mps(graph.edges[i], t) for i in ids}
+
+
+def typical_class_profiles(bucket_s: float = 900.0) -> dict[RoadClass, list[float]]:
+    """Generic weekday rush-hour shape per road class.
+
+    A stand-in until profiles learned from archived speeds exist for a link.
+    """
+    depth = {  # (morning, evening) share of speed lost at the peak
+        RoadClass.MOTORWAY: (0.45, 0.45),
+        RoadClass.RAMP: (0.40, 0.40),
+        RoadClass.TRUNK: (0.35, 0.35),
+        RoadClass.PRIMARY: (0.40, 0.40),
+        RoadClass.SECONDARY: (0.30, 0.30),
+        RoadClass.LOCAL: (0.15, 0.15),
+    }
+    buckets = round(DAY_S / bucket_s)
+    out = {}
+    for road_class, (am, pm) in depth.items():
+        row = []
+        for b in range(buckets):
+            h = (b + 0.5) * bucket_s / 3600.0
+            loss = am * math.exp(-0.5 * ((h - 8.25) / 0.75) ** 2) + pm * math.exp(-0.5 * ((h - 18.5) / 1.0) ** 2)
+            loss += 0.06 * math.exp(-0.5 * ((h - 13.0) / 2.0) ** 2)
+            row.append(max(0.15, 1.0 - loss))
+        out[road_class] = row
+    return out
