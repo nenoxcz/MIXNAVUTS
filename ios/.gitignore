@@ -1,0 +1,8 @@
+*.xcodeproj/
+xcuserdata/
+DerivedData/
+.build/
+.swiftpm/
+Config/Local.xcconfig
+Mixnavuts/Info.plist
+Mixnavuts/Mixnavuts.entitlements

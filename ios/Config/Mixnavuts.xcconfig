@@ -1,0 +1,9 @@
+// 엔진 API 주소. 시뮬레이터에서는 이 Mac에서 띄운 `python -m mixnavuts serve`에 붙는다.
+// 실기기에서는 Config/Local.xcconfig에 같은 이름으로 Mac의 IP를 넣는다. ("//"는 주석이라 "/$()/"로 쓴다)
+MIXNAVUTS_API_URL = http:/$()/localhost:8080
+
+// 네이버 클라우드 플랫폼 Maps 클라이언트 ID. 비워 두면 Apple 지도(MapKit)를 쓴다.
+NAVER_MAP_CLIENT_ID =
+
+// 개인 설정(키, 주소)은 버전 관리하지 않는 Local.xcconfig에 둔다.
+#include? "Local.xcconfig"
