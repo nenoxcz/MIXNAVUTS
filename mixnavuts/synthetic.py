@@ -16,6 +16,7 @@ import random
 from dataclasses import dataclass
 
 from .graph import RoadClass, RoadGraph
+from .roadinfo import RoadDetails, RoadFeature
 from .traffic import DAY_S, Incident, ProfileTraffic
 
 BUCKET_S = 900.0
@@ -220,3 +221,34 @@ def realize_day(city: City, rng: random.Random, n_incidents: tuple[int, int] = (
 def observed_edges(city: City, rng: random.Random) -> list[int]:
     """Edges that have a detector or enough probe vehicles to report a speed."""
     return [e.id for e in city.graph.edges if rng.random() < _OBSERVED_SHARE[e.road_class]]
+
+
+_SYNTHETIC_LANES = {
+    RoadClass.MOTORWAY: 3,
+    RoadClass.RAMP: 1,
+    RoadClass.TRUNK: 2,
+    RoadClass.PRIMARY: 3,
+    RoadClass.SECONDARY: 2,
+    RoadClass.LOCAL: 1,
+}
+_SIGNALISED = {RoadClass.TRUNK, RoadClass.PRIMARY, RoadClass.SECONDARY}
+
+
+def synthetic_details(city: City, seed: int = 7) -> RoadDetails:
+    """Lane counts, cameras, traffic lights and speed bumps for the synthetic city."""
+    rng = random.Random(seed + 101)
+    g = city.graph
+    details = RoadDetails()
+    for edge in g.edges:
+        details.lane_count[edge.id] = _SYNTHETIC_LANES[edge.road_class]
+        roll = rng.random()
+        if edge.road_class == RoadClass.MOTORWAY and roll < 0.15:
+            details.add_feature(edge.id, RoadFeature("speed_camera", edge.length_m * 0.5, 100))
+        elif edge.road_class == RoadClass.PRIMARY and roll < 0.05:
+            details.add_feature(edge.id, RoadFeature("speed_camera", edge.length_m * 0.6, 60))
+        elif edge.road_class == RoadClass.LOCAL and roll < 0.08:
+            details.add_feature(edge.id, RoadFeature("speed_bump", edge.length_m * 0.4))
+        crossing = any(o.road_class in _SIGNALISED and o.name != edge.name for o in g.out_edges(edge.target))
+        if edge.road_class in _SIGNALISED and crossing:
+            details.add_feature(edge.id, RoadFeature("traffic_light", max(0.0, edge.length_m - 5.0)))
+    return details

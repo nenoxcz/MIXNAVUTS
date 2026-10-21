@@ -287,6 +287,7 @@ class ArchiveTest(unittest.TestCase):
         other = net.graph.edge_by_ext("2000000005")
         self.assertLess(profiles.factor(other, 8.25 * 3600), 1.0)  # class profile fallback
         self.assertIsInstance(db, sqlite3.Connection)
+        db.close()
 
 
 if __name__ == "__main__":

@@ -689,7 +689,13 @@
      "type": "turn",
      "modifier": "right",
      "road_name": "국도 7호선",
-     "instruction": "우회전 후 국도 7호선"
+     "instruction": "우회전 후 국도 7호선",
+     "lanes": {
+      "count": 3,
+      "recommended": [
+       3
+      ]
+     }
     },
     {
      "point_index": 32,
@@ -697,7 +703,13 @@
      "type": "turn",
      "modifier": "right",
      "road_name": "이면도로",
-     "instruction": "우회전 후 이면도로"
+     "instruction": "우회전 후 이면도로",
+     "lanes": {
+      "count": 2,
+      "recommended": [
+       2
+      ]
+     }
     },
     {
      "point_index": 35,
@@ -706,6 +718,120 @@
      "modifier": "straight",
      "road_name": "이면도로",
      "instruction": "목적지 도착"
+    }
+   ],
+   "alerts": [
+    {
+     "type": "traffic_light",
+     "distance_m": 729.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 2169.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 3580.6,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 5046.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 6477.7,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 7912.8,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 9329.9,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 10769.0,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 12210.8,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 13647.5,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 15104.9,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 16548.7,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 17994.5,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 19435.2,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 20891.2,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 22350.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
     }
    ],
    "curves": []
@@ -1090,7 +1216,13 @@
      "type": "ramp_on",
      "modifier": "right",
      "road_name": "중앙고속도로 IC",
-     "instruction": "오른쪽 중앙고속도로 진입로"
+     "instruction": "오른쪽 중앙고속도로 진입로",
+     "lanes": {
+      "count": 3,
+      "recommended": [
+       3
+      ]
+     }
     },
     {
      "point_index": 14,
@@ -1098,7 +1230,13 @@
      "type": "ramp_off",
      "modifier": "left",
      "road_name": "중앙고속도로 IC",
-     "instruction": "왼쪽 진출로 (중앙고속도로 IC)"
+     "instruction": "왼쪽 진출로 (중앙고속도로 IC)",
+     "lanes": {
+      "count": 3,
+      "recommended": [
+       1
+      ]
+     }
     },
     {
      "point_index": 15,
@@ -1114,7 +1252,13 @@
      "type": "turn",
      "modifier": "left",
      "road_name": "이면도로",
-     "instruction": "좌회전 후 이면도로"
+     "instruction": "좌회전 후 이면도로",
+     "lanes": {
+      "count": 2,
+      "recommended": [
+       1
+      ]
+     }
     },
     {
      "point_index": 19,
@@ -1123,6 +1267,43 @@
      "modifier": "straight",
      "road_name": "이면도로",
      "instruction": "목적지 도착"
+    }
+   ],
+   "alerts": [
+    {
+     "type": "traffic_light",
+     "distance_m": 729.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "speed_camera",
+     "distance_m": 2279.3,
+     "speed_limit_kmh": 100,
+     "label": "과속 단속 100",
+     "note": null
+    },
+    {
+     "type": "speed_camera",
+     "distance_m": 5079.3,
+     "speed_limit_kmh": 100,
+     "label": "과속 단속 100",
+     "note": null
+    },
+    {
+     "type": "speed_camera",
+     "distance_m": 13479.3,
+     "speed_limit_kmh": 100,
+     "label": "과속 단속 100",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 20677.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
     }
    ],
    "curves": []
@@ -1695,7 +1876,13 @@
      "type": "turn",
      "modifier": "right",
      "road_name": "동서대로 14",
-     "instruction": "우회전 후 동서대로 14"
+     "instruction": "우회전 후 동서대로 14",
+     "lanes": {
+      "count": 2,
+      "recommended": [
+       2
+      ]
+     }
     },
     {
      "point_index": 11,
@@ -1703,7 +1890,13 @@
      "type": "turn",
      "modifier": "left",
      "road_name": "남북대로 10",
-     "instruction": "좌회전 후 남북대로 10"
+     "instruction": "좌회전 후 남북대로 10",
+     "lanes": {
+      "count": 2,
+      "recommended": [
+       1
+      ]
+     }
     },
     {
      "point_index": 12,
@@ -1711,7 +1904,13 @@
      "type": "turn",
      "modifier": "right",
      "road_name": "이면도로",
-     "instruction": "우회전 후 이면도로"
+     "instruction": "우회전 후 이면도로",
+     "lanes": {
+      "count": 2,
+      "recommended": [
+       2
+      ]
+     }
     },
     {
      "point_index": 29,
@@ -1720,6 +1919,50 @@
      "modifier": "straight",
      "road_name": "이면도로",
      "instruction": "목적지 도착"
+    }
+   ],
+   "alerts": [
+    {
+     "type": "traffic_light",
+     "distance_m": 2119.1,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 3538.3,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 4962.0,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 6403.9,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "traffic_light",
+     "distance_m": 7819.6,
+     "speed_limit_kmh": null,
+     "label": "신호등",
+     "note": null
+    },
+    {
+     "type": "speed_bump",
+     "distance_m": 16015.5,
+     "speed_limit_kmh": null,
+     "label": "과속방지턱",
+     "note": null
     }
    ],
    "curves": []

@@ -1,4 +1,4 @@
-"""Command line: `python -m mixnavuts route|serve|archive|backtest|places|nodelink-info`."""
+"""Command line: `python -m mixnavuts route|serve|archive|backtest|places|nodelink-info|hdmap-info`."""
 
 from __future__ import annotations
 
@@ -82,23 +82,80 @@ def parse_bbox(text: str) -> tuple[float, float, float, float]:
     return values  # type: ignore[return-value]
 
 
+def pick_search(choice: str):
+    """Place/address search from the keys in the environment. `auto`: 브이월드 → 도로명주소 → 카카오 → network names."""
+    env = os.environ
+    available = {
+        "vworld": bool(env.get("VWORLD_API_KEY")),
+        "juso": bool(env.get("JUSO_SEARCH_KEY") and env.get("JUSO_COORD_KEY")),
+        "kakao": bool(env.get("KAKAO_REST_API_KEY")),
+    }
+    if choice == "auto":
+        choice = next((name for name, ok in available.items() if ok), "network")
+    elif choice != "network" and not available[choice]:
+        raise SystemExit(f"--search {choice}: 필요한 API 키 환경 변수가 없습니다 (docs/KOREA.md).")
+    if choice == "vworld":
+        from .korea.vworld import VWorldSearch
+
+        return VWorldSearch(env["VWORLD_API_KEY"], domain=env.get("VWORLD_DOMAIN"))
+    if choice == "juso":
+        from .korea.juso import JusoSearch
+
+        return JusoSearch(env["JUSO_SEARCH_KEY"], env["JUSO_COORD_KEY"])
+    if choice == "kakao":
+        from .korea.kakao import KakaoLocalSearch
+
+        return KakaoLocalSearch(env["KAKAO_REST_API_KEY"])
+    return None
+
+
+def pick_basemap(layer: str):
+    key = os.environ.get("VWORLD_API_KEY")
+    if not key or layer == "none":
+        return None
+    from .korea.vworld import VWorldTiles
+
+    return VWorldTiles(key, layer, domain=os.environ.get("VWORLD_DOMAIN"))
+
+
 def build_engine(args: argparse.Namespace) -> Engine:
     if args.network == "synthetic":
-        return synthetic_engine(args.seed)
+        engine = synthetic_engine(args.seed)
+        engine.basemap = pick_basemap(args.basemap)
+        return engine
     from .korea.archive import learn_profiles, open_archive
     from .korea.its import ItsClient, ItsFeed
-    from .korea.kakao import KakaoLocalSearch
     from .korea.nodelink import load_nodelink
 
     if not args.nodelink or not args.bbox:
         raise SystemExit("--network nodelink에는 --nodelink DIR 과 --bbox 가 필요합니다.")
     network = load_nodelink(args.nodelink, epsg=args.epsg, bbox=args.bbox)
+    attribution = ["국가표준노드링크 © 국가교통정보센터"]
+    if args.hdmap:
+        from .korea.hdmap import load_hdmap
+
+        summary = load_hdmap(network, args.hdmap)
+        attribution.append("정밀도로지도 © 국토지리정보원")
+        print(
+            f"정밀도로지도: 차로 링크 {summary['lane_links']:,} · 차로 수 연결 {summary['links_with_lanes']:,}"
+            f" · 신호등 {summary['lights']:,} · 과속방지턱 {summary['bumps']:,}"
+        )
+    if args.cameras:
+        from .korea.cameras import load_cameras
+
+        attribution.append("무인교통단속카메라 © 경찰청")
+        print(f"무인단속카메라: {load_cameras(network, args.cameras):,}건 연결")
     if args.archive:
         network.historical = learn_profiles(open_archive(args.archive), network)
-    its_key, kakao_key = os.environ.get("ITS_API_KEY"), os.environ.get("KAKAO_REST_API_KEY")
+    its_key = os.environ.get("ITS_API_KEY")
     feed = ItsFeed(ItsClient(its_key, args.bbox), network) if its_key else None
-    search = KakaoLocalSearch(kakao_key) if kakao_key else None
-    return Engine(network, feed, search)
+    return Engine(
+        network,
+        feed,
+        pick_search(args.search),
+        basemap=pick_basemap(args.basemap),
+        attribution=" · ".join(attribution),
+    )
 
 
 def cmd_serve(args: argparse.Namespace) -> int:
@@ -107,7 +164,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
     server = serve(engine, args.host, args.port)
     print(
         f"MIXNAVUTS Engine API · {health['network']} ({health['nodes']:,} nodes, {health['edges']:,} links)"
-        f" · live {health['live']['source']} · search {health['search']}"
+        f" · live {health['live']['source']} · search {health['search']} · basemap {health['basemap'] or '-'}"
     )
     print(f"http://{args.host}:{args.port}/v1/health")
     try:
@@ -136,10 +193,17 @@ def cmd_archive(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_nodelink_info(args: argparse.Namespace) -> int:
-    from .korea.nodelink import describe
+def cmd_hdmap_info(args: argparse.Namespace) -> int:
+    from .korea.hdmap import describe_hdmap
 
-    print(describe(args.directory, args.encoding))
+    print(describe_hdmap(args.directory, args.encoding))
+    return 0
+
+
+def cmd_nodelink_info(args: argparse.Namespace) -> int:
+    from .korea.nodelink import describe_nodelink
+
+    print(describe_nodelink(args.directory, args.encoding))
     return 0
 
 
@@ -171,8 +235,17 @@ def main(argv: list[str] | None = None) -> int:
     server.add_argument("--network", choices=["synthetic", "nodelink"], default="synthetic")
     server.add_argument("--nodelink", metavar="DIR", help="국가표준노드링크 shapefile 폴더")
     server.add_argument("--bbox", type=parse_bbox, help="최소경도,최소위도,최대경도,최대위도")
-    server.add_argument("--epsg", type=int, default=5186, help="노드링크 좌표계 (기본 5186)")
+    server.add_argument("--epsg", type=int, help="노드링크 좌표계 (기본: .prj에서 읽음)")
     server.add_argument("--archive", metavar="DB", help="ITS 속도 아카이브(SQLite)로 평소 패턴 학습")
+    server.add_argument("--hdmap", metavar="DIR", help="정밀도로지도 shapefile 폴더 (차로 안내·신호등·과속방지턱)")
+    server.add_argument("--cameras", metavar="CSV", help="전국무인교통단속카메라표준데이터 CSV")
+    server.add_argument("--search", choices=["auto", "vworld", "juso", "kakao", "network"], default="auto", help="장소 검색")
+    server.add_argument(
+        "--basemap",
+        choices=["Base", "white", "midnight", "Hybrid", "Satellite", "none"],
+        default="Base",
+        help="브이월드 배경지도 레이어 (VWORLD_API_KEY 필요)",
+    )
     server.add_argument("--seed", type=int, default=1, help="합성 교통 시드")
     server.set_defaults(func=cmd_serve)
 
@@ -182,6 +255,11 @@ def main(argv: list[str] | None = None) -> int:
     archive.add_argument("--interval", type=float, default=300.0, help="수집 간격(초)")
     archive.add_argument("--once", action="store_true", help="한 번만 수집")
     archive.set_defaults(func=cmd_archive)
+
+    hd = sub.add_parser("hdmap-info", help="정밀도로지도 shapefile 필드 확인")
+    hd.add_argument("directory")
+    hd.add_argument("--encoding", default="cp949")
+    hd.set_defaults(func=cmd_hdmap_info)
 
     info = sub.add_parser("nodelink-info", help="표준노드링크 shapefile 필드 확인")
     info.add_argument("directory")

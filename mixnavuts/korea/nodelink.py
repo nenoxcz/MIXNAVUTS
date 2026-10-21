@@ -23,8 +23,10 @@ from typing import Any
 from ..geo import LocalProjection, haversine_m
 from ..graph import RoadClass, RoadGraph
 from ..network import RoadNetwork
+from ..roadinfo import RoadDetails
 from ..traffic import ProfileTraffic, TrafficModel, typical_class_profiles
-from .tm import to_wgs84
+from .shp import describe, field, find_layer, number, records
+from .tm import epsg_of_shapefile, to_wgs84
 
 # ROAD_RANK codes
 ROAD_RANK_CLASS = {
@@ -50,21 +52,6 @@ DEFAULT_SPEED_KMH = {
 # 주행요금(원/km)만 링크 길이에 비례해 붙인다.
 MOTORWAY_TOLL_KRW_PER_KM = 44.3
 _NOT_RAMP = {"", "0", "000", "None"}
-
-
-def _text(record: Mapping[str, Any], *names: str) -> str:
-    for name in names:
-        value = record.get(name)
-        if value not in (None, ""):
-            return str(value).strip()
-    return ""
-
-
-def _number(record: Mapping[str, Any], *names: str) -> float:
-    try:
-        return float(_text(record, *names) or 0)
-    except ValueError:
-        return 0.0
 
 
 def _winding(points: list[tuple[float, float]], length_m: float) -> float:
@@ -95,12 +82,12 @@ def build_network(
     node_ll: dict[str, tuple[float, float]] = {}
     node_name: dict[str, str] = {}
     for record, (x, y) in nodes:
-        node_id = _text(record, "NODE_ID")
+        node_id = field(record, "NODE_ID")
         lat, lon = to_wgs84(x, y, epsg)
         if bbox and not (bbox[0] <= lon <= bbox[2] and bbox[1] <= lat <= bbox[3]):
             continue
         node_ll[node_id] = (lat, lon)
-        node_name[node_id] = _text(record, "NODE_NAME")
+        node_name[node_id] = field(record, "NODE_NAME")
     if not node_ll:
         raise ValueError("no nodes inside the bounding box")
 
@@ -115,21 +102,22 @@ def build_network(
         index[node_id] = graph.add_node(x, y, label if label and label not in graph.places() else "")
 
     shapes: dict[int, list[tuple[float, float]]] = {}
+    details = RoadDetails()
     for record, points in links:
-        f_node, t_node = _text(record, "F_NODE"), _text(record, "T_NODE")
+        f_node, t_node = field(record, "F_NODE"), field(record, "T_NODE")
         if f_node not in index or t_node not in index:
             continue
-        road_class = ROAD_RANK_CLASS.get(_text(record, "ROAD_RANK"), RoadClass.LOCAL)
-        if _text(record, "CONNECT") not in _NOT_RAMP:
+        road_class = ROAD_RANK_CLASS.get(field(record, "ROAD_RANK"), RoadClass.LOCAL)
+        if field(record, "CONNECT") not in _NOT_RAMP:
             road_class = RoadClass.RAMP
         shape = [to_wgs84(x, y, epsg) for x, y in points] if points else []
-        length = _number(record, "LENGTH")
+        length = number(record, "LENGTH")
         if length <= 0:
             length = sum(haversine_m(*a, *b) for a, b in zip(shape, shape[1:], strict=False)) or graph.euclidean_m(
                 index[f_node], index[t_node]
             )
-        speed = _number(record, "MAX_SPD") or DEFAULT_SPEED_KMH[road_class]
-        road_name = _text(record, "ROAD_NAME") or (f"{_text(record, 'ROAD_NO')}번 도로" if _text(record, "ROAD_NO") else "")
+        speed = number(record, "MAX_SPD") or DEFAULT_SPEED_KMH[road_class]
+        road_name = field(record, "ROAD_NAME") or (f"{field(record, 'ROAD_NO')}번 도로" if field(record, "ROAD_NO") else "")
         planar = [projection.to_xy(lat, lon) for lat, lon in shape]
         edge = graph.add_edge(
             index[f_node],
@@ -140,29 +128,21 @@ def build_network(
             toll_krw=round(MOTORWAY_TOLL_KRW_PER_KM * length / 1000) if road_class == RoadClass.MOTORWAY else 0,
             curvature=_winding(planar, length),
             name=road_name or "이면도로",
-            ext_id=_text(record, "LINK_ID"),
+            ext_id=field(record, "LINK_ID"),
         )
         if len(shape) > 2:
             shapes[edge.id] = shape
+        lanes = int(number(record, "LANES"))
+        if lanes > 0:
+            details.lane_count[edge.id] = lanes
 
     historical = historical or ProfileTraffic(class_profiles=typical_class_profiles())
     snap = [node for node in graph.nodes if graph.out_edges(node) and graph.in_edges(node)]
-    return RoadNetwork(name, graph, projection, historical, snap, synthetic=False, shapes=shapes)
-
-
-def _reader(path: Path, encoding: str):
-    try:
-        import shapefile  # pyshp
-    except ImportError as exc:
-        raise RuntimeError('reading shapefiles needs pyshp: pip install "mixnavuts[korea]"') from exc
-    return shapefile.Reader(str(path), encoding=encoding, encodingErrors="replace")
+    return RoadNetwork(name, graph, projection, historical, snap, synthetic=False, shapes=shapes, details=details)
 
 
 def find_shapefiles(directory: str | Path) -> tuple[Path, Path]:
-    directory = Path(directory)
-    files = {p.name.upper(): p for p in directory.glob("*.shp")}
-    node = next((p for name, p in files.items() if "NODE" in name), None)
-    link = next((p for name, p in files.items() if "LINK" in name), None)
+    node, link = find_layer(directory, "NODE"), find_layer(directory, "LINK")
     if node is None or link is None:
         raise FileNotFoundError(f"expected *NODE*.shp and *LINK*.shp in {directory}")
     return node, link
@@ -171,33 +151,17 @@ def find_shapefiles(directory: str | Path) -> tuple[Path, Path]:
 def load_nodelink(
     directory: str | Path,
     *,
-    epsg: int = 5186,
+    epsg: int | None = None,
     bbox: tuple[float, float, float, float] | None = None,
     encoding: str = "cp949",
     historical: TrafficModel | None = None,
 ) -> RoadNetwork:
+    """`epsg=None` reads the coordinate system from the .prj (5186 if it cannot tell)."""
     node_path, link_path = find_shapefiles(directory)
-    node_reader, link_reader = _reader(node_path, encoding), _reader(link_path, encoding)
-
-    def nodes():
-        for item in node_reader.iterShapeRecords():
-            yield item.record.as_dict(), tuple(item.shape.points[0])
-
-    def links():
-        for item in link_reader.iterShapeRecords():
-            yield item.record.as_dict(), [tuple(p) for p in item.shape.points]
-
-    return build_network(nodes(), links(), epsg=epsg, bbox=bbox, historical=historical)
+    epsg = epsg or epsg_of_shapefile(link_path)
+    nodes = ((record, points[0]) for record, points in records(node_path, encoding) if points)
+    return build_network(nodes, records(link_path, encoding), epsg=epsg, bbox=bbox, historical=historical)
 
 
-def describe(directory: str | Path, encoding: str = "cp949") -> str:
-    """Field names and a sample record of each shapefile, to check the layout."""
-    lines = []
-    for path in find_shapefiles(directory):
-        reader = _reader(path, encoding)
-        fields = [f[0] for f in reader.fields[1:]]
-        sample = reader.record(0).as_dict() if len(reader) else {}
-        first = reader.shape(0).points[:1] if len(reader) else []
-        lines += [f"{path.name}: {len(reader)} records", f"  fields: {', '.join(fields)}", f"  sample: {sample}"]
-        lines.append(f"  first point: {first}")
-    return "\n".join(lines)
+def describe_nodelink(directory: str | Path, encoding: str = "cp949") -> str:
+    return describe(list(find_shapefiles(directory)), encoding)
