@@ -20,15 +20,15 @@ Predictive Multi-Route Navigation. 수백 개의 후보 경로를 탐색하는 �
 개인화 (평소 경로·주행 목적)       ┘    ▶ 선호·다양성 기반 3~5개 선택 └─▶ HUD
 ```
 
-| 모듈 | 기능 | 프로토타입 |
+| 모듈 | 기능 | 현재 구현 |
 | --- | --- | --- |
-| MIXNAVUTS Route | 수백 개 후보 경로 생성 | `candidates.py`, `search.py`, `evaluate.py` |
-| MIXNAVUTS Traffic | 실시간·미래 교통 상황 예측 | `traffic.py` |
+| MIXNAVUTS Route | 수백 개 후보 경로 생성 | `mixnavuts/candidates.py`, `search.py`, `evaluate.py` |
+| MIXNAVUTS Traffic | 실시간·미래 교통 상황 예측 | `mixnavuts/traffic.py`, `live.py`, `korea/its.py`, `korea/archive.py` |
 | MIXNAVUTS Distribution | 다수 차량의 경로 분배 최적화 | 미구현 |
-| MIXNAVUTS Personal | 운전자 선호와 주행 목적 분석 | `ranking.py` (주행 목적별 비용만) |
-| MIXNAVUTS Navigation | 위치 추적·차선 안내·재탐색 | 미구현 |
-| MIXNAVUTS Connect | Android Auto·CarPlay 연동 | 미구현 |
-| MIXNAVUTS HUD | 속도·도로 형상·분기점·ETA 표시 | 미구현 |
+| MIXNAVUTS Personal | 운전자 선호와 주행 목적 분석 | `mixnavuts/ranking.py` (주행 목적별 비용만) |
+| MIXNAVUTS Navigation | 위치 추적·차선 안내·재탐색 | `mixnavuts/guidance.py` + 앱 코어의 `RouteTracker`·`NavigationSession` (차선 안내 없음) |
+| MIXNAVUTS Connect | Android Auto·CarPlay 연동 | `android/app/.../car`, `ios/Mixnavuts/CarPlay` |
+| MIXNAVUTS HUD | 속도·도로 형상·분기점·ETA 표시 | 앱 코어의 `HudState` (값과 문구). 화면 디자인은 미정 |
 
 제품은 두 가지로 나눌 수 있다.
 
@@ -111,12 +111,12 @@ ETA             14:36
 
 ## 로드맵
 
-| 단계 | 내용 | 완료 기준 |
-| --- | --- | --- |
-| 0 | 엔진 프로토타입과 백테스트 하네스 (합성 데이터) | ✅ 이 저장소 |
-| 1 | 실제 데이터 수집: 링크 속도·돌발상황 아카이브, 표준노드링크/OSM 도로망 로더 | 매일 자동 수집 |
-| 2 | 실제 데이터 백테스트: τ 튜닝, 회전 비용, 요일 프로파일 | 기준선(평소 패턴, 현재 속도 고정) 대비 ETA 오차와 최적 경로 적중률 개선 입증 |
-| 3 | Engine API 서버와 탐색 가속 | 수도권 규모 응답 시간 목표 충족 |
-| 4 | 스마트폰 앱과 자체 HUD 화면, 주행 중 재탐색 | 실주행 테스트 |
-| 5 | Android Auto·CarPlay 연동 (권한 신청 포함) | 지원 차량 계기판·HUD 안내 |
-| 6 | Distribution | 사용자 규모 확보 후 |
+| 단계 | 내용 | 완료 기준 | 상태 |
+| --- | --- | --- | --- |
+| 0 | 엔진 프로토타입과 백테스트 하네스 (합성 데이터) | — | ✅ |
+| 1 | 실제 데이터 수집: 링크 속도·돌발상황 아카이브, 표준노드링크 도로망 로더 | 매일 자동 수집 | 코드 있음. 실제 키로 수집 시작 필요 ([KOREA.md](KOREA.md)) |
+| 2 | 실제 데이터 백테스트: τ 튜닝, 회전 비용, 요일 프로파일 | 기준선(평소 패턴, 현재 속도 고정) 대비 ETA 오차와 최적 경로 적중률 개선 입증 | 아카이브가 쌓인 뒤 |
+| 3 | Engine API 서버와 탐색 가속 | 수도권 규모 응답 시간 목표 충족 | API 있음. 가속 미착수 |
+| 4 | 스마트폰 앱과 자체 HUD 화면, 주행 중 재탐색 | 실주행 테스트 | 앱 기능 골격 있음. 디자인·빌드 확인 필요 |
+| 5 | Android Auto·CarPlay 연동 (권한 신청 포함) | 지원 차량 계기판·HUD 안내 | 코드 있음. DHU·CarPlay 시뮬레이터 확인과 Apple 권한 신청 필요 |
+| 6 | Distribution | 사용자 규모 확보 후 | — |

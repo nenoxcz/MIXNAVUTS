@@ -123,7 +123,10 @@ class NavigationController(private val context: Context, private val api: Mixnav
         val fixes = if (s.simulate) simulatedFixes(route, s.simulationSpeed) else location.fixes()
         driveJob = scope.launch {
             try {
-                fixes.collect { fix -> _state.update { it.copy(navigation = nav.onFix(fix)) } }
+                fixes.collect { fix ->
+                    val update = nav.onFix(fix) // suspends (rerouting); keep it out of update {}
+                    _state.update { it.copy(navigation = update) }
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
